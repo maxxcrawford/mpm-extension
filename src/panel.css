@@ -1,0 +1,12 @@
+body {
+  font-family: "SF Pro Text", 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+html,
+body {
+  overflow: hidden;
+  min-height: 200px;
+  min-width: 355px;
+  max-width: 355px;
+  transition: all .25s ease-in-out;
+}
