@@ -1,67 +1,81 @@
 "use strict";
 
+const currentSiteHost = window.location.host;
+
+function dunkinDonutsCCPA() {
+	console.log("dunkinDonutsCCPA");
+	// let input = document.getElementById("category_1");
+	let input2 = document.getElementById("parent_1_option_1");
+	let email = document.getElementById("emailInput");
+
+	// setTimeout(()=>{
+	// 	input.click();
+	// }, 2000);
+	setTimeout(()=>{
+		input2.click();
+	}, 500);
+	setTimeout(()=>{
+		email.focus();
+		email.select();
+		email.value = "maxx.crawford+8@gmail.com";
+		email.blur();
+	}, 1000);
+
+	const form = document.querySelector(".doNotSell__form");
+
+	console.log(form);
+
+	setTimeout(()=>{
+		let submit = form.querySelector("input[type=submit]");
+		console.log(submit);
+		submit.click();
+		// form.submit();
+	}, 2000);
+
+	setTimeout(()=>{
+		console.log("iframe-test2");
+
+		let recaptchaIframe = document.querySelector('[title="recaptcha challenge"]');
+		console.log(recaptchaIframe);
+		console.log("done1");
+		console.log(recaptchaIframe.contentDocument);
+		console.log("done2");
+		console.log(recaptchaIframe.contentWindow);
+		console.log("done3");
+
+		// document.querySelector('[title="recaptcha challenge"]').contentWindow.document.getElementById("recaptcha-audio-button").click()
+		// form.submit();
+	}, 5000);
+
+}
+
+const supportedSites = [
+	"www.dunkindonuts.com"
+];
+
+function runRecipe(site) {
+	switch (site) {
+		case "www.dunkindonuts.com":
+			dunkinDonutsCCPA();
+			break;
+		default:
+			console.error(`No recipe found for ${site}`);
+			// throw new Error();
+	}
+}
+
+(function () {
+	// Init
+	console.log("content-script: ", currentSiteHost);
+	runRecipe(currentSiteHost);
+	if ( supportedSites.includes(currentSiteHost) ) {
+		runRecipe(currentSiteHost);
+	}
+})();
+
+
+// TODO: On page, push notification to fix
+
 // TODO: Add logic to only run specific recipie based on URL
-console.log("content-script.js v2");
 
 // TODO: Use form to populate information
-
-let input = document.getElementById("category_1");
-let input2 = document.getElementById("parent_1_option_1");
-let email = document.getElementById("emailInput");
-
-// setTimeout(()=>{
-// 	input.click();
-// }, 2000);
-setTimeout(()=>{
-	input2.click();
-}, 500);
-setTimeout(()=>{
-	email.focus();
-	email.select();
-	email.value = "maxx.crawford+8@gmail.com";
-	email.blur();
-}, 1000);
-
-const form = document.querySelector(".doNotSell__form");
-
-console.log(form);
-
-setTimeout(()=>{
-	let submit = form.querySelector("input[type=submit]");
-	console.log(submit);
-	submit.click();
-	// form.submit();
-}, 2000);
-
-// document.querySelector('.recaptcha-audio-button').contentWindow.document.getElementById("recaptcha-audio-button").click()
-
-// form.submit();
-
-// /*
-// Listen for messages from the page.
-// If the message was from the page script, show an alert.
-// */
-// window.addEventListener("message", (event) => {
-//   if (event.source == window &&
-//       event.data &&
-//       event.data.direction == "from-page-script") {
-//     alert("Content script received message: \"" + event.data.message + "\"");
-//   }
-// });
-//
-// /*
-// Send a message to the page script.
-// */
-// function messagePageScript() {
-//   window.postMessage({
-//     direction: "from-content-script",
-//     message: "Message from the content script"
-//   }, "https://mdn.github.io");
-// }
-//
-// /*
-// Add messagePageScript() as a listener to click events on
-// the "from-content-script" element.
-// */
-// var fromContentScript = document.getElementById("from-content-script");
-// fromContentScript.addEventListener("click", messagePageScript);

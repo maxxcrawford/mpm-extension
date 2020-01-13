@@ -2,11 +2,17 @@
 
 console.log("background.js");
 
-// function openMyPage() {
-//   console.log("injecting");
-//    browser.tabs.create({
-//      "url": "/options.html"
-//    });
-// }
-
-// browser.browserAction.onClicked.addListener(openMyPage);
+const supportedSites = [
+	"https://www.dunkindonuts.com/en/consumer-rights"
+];
+//
+// (async function init () {
+//   // setupWindowsAndTabsListeners();
+//
+//   browser.runtime.onMessage.addListener( (message, {url}) => {
+//     if (message === "what-sites-are-added") {
+//       return supportedSites;
+//     }
+//   });
+// })();
+//

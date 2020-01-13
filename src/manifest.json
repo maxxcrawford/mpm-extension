@@ -34,9 +34,10 @@
 
     "content_scripts": [
         {
-            "matches": ["https://www.dunkindonuts.com/en/consumer-rights"],
+            "matches": ["<all_urls>"],
             "js": ["content-script.js"],
-            "css": ["content-script.css"]
+            "css": ["content-script.css"],
+            "all_frames": true
         }
     ],
 

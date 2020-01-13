@@ -15,20 +15,21 @@
     </section>
     <section>
       <h2>Who are you?</h2>
-      <form class="userInfo" action="">
+      <form id="userInfo" class="userInfo" autocomplete="on" action="">
         <label for="firstName">First name</label>
-        <input autocomplete="given-name" type="text" name="firstName" value="">
+        <input required autocomplete="given-name" type="text" name="firstName" value="">
         <label for="lastName">Last name</label>
-        <input autocomplete="family-name" type="text" name="lastName" value="">
+        <input required autocomplete="family-name" type="text" name="lastName" value="">
         <label for="email">Email address</label>
-        <input autocomplete="email" type="email" name="email" value="">
+        <input required autocomplete="email" type="email" name="email" value="">
+        <input type="submit" name="saveInfo" id="saveInfo" value="Submit">
       </form>
     </section>
     <section>
       <h2>Dunkin Donuts</h2>
       <a class="button" href="https://www.dunkindonuts.com/en/consumer-rights">Request</a>
       <a class="button" href="https://www.dunkindonuts.com/en/consumer-rights">Delete</a>
-      <a class="button" href="https://www.dunkindonuts.com/en/consumer-rights">Opt Out</a>
+      <a class="button" href="https://www.dunkindonuts.com/en/consumer-rights">Do Not Sell</a>
     </section>
 
   </main>
