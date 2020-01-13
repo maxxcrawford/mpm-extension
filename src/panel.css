@@ -2,11 +2,52 @@ body {
   font-family: "SF Pro Text", 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-html,
 body {
   overflow: hidden;
+  padding: 0;
   min-height: 200px;
-  min-width: 355px;
-  max-width: 355px;
+  min-width: 300px;
+  max-width: 300px;
+  width: 300px;
   transition: all .25s ease-in-out;
+  position: relative;
+  background: #1C1B22;
+  font-size: 16px;
+}
+
+main {
+  padding: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+h1, p {
+  color: white;
+}
+
+h1 {
+  line-height: 1rem;
+  margin: 0 0 1rem;
+}
+
+p {
+  margin: 0 0 1rem;
+  padding: 0;
+  line-height: 1.5rem;
+}
+
+.button {
+  display: block;
+  padding: 10px;
+  text-align: center;
+  background: #ED00B5;
+  color: white;
+  border-radius: 6px 12px 6px 12px;
+  left: 0;
+  text-decoration: none;
+  transition: background 0.2s ease-out;
+}
+
+.button:hover {
+  background: #AD3BFF;
 }

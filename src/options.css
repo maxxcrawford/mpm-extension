@@ -1,0 +1,92 @@
+body {
+  font-family: "SF Pro Text", 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  /* overflow: hidden;
+  min-height: 200px;
+  min-width: 300px;
+  max-width: 300px;
+  width: 300px; */
+
+  padding: 2rem;
+  transition: all .25s ease-in-out;
+  position: relative;
+  background: #1C1B22;
+  font-size: 16px;
+}
+
+main {
+  padding: 1rem;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+section {
+	background: #494851;
+	border-radius: 1rem 2rem 1rem 2rem;
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+h1, h2, p {
+  color: white;
+}
+
+h1, h2 {
+  line-height: normal;
+  margin: 0 0 1rem;
+}
+
+p {
+  margin: 0 0 1rem;
+  padding: 0;
+  line-height: 1.5rem;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  background: #AD3BFF;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s ease-out;
+  margin-right: 1rem;
+}
+
+.button:hover {
+  background: #982EE4;
+}
+
+.userInfo {
+  padding: 0;
+}
+
+.userInfo label {
+  color: white;
+  padding: 0 0 0.5rem;
+}
+
+.userInfo input {
+  display: block;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  box-shadow: 0;
+}
+
+.userInfo input, .userInfo label {
+  display: block;
+  width: 100%;
+}
