@@ -1,9 +1,14 @@
 "use strict";
 
-window.addEventListener("click", (e) => {
-  e.preventDefault();
-  browser.tabs.create({
-    url: "/options.html"
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.querySelector(".button");
+
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    browser.tabs.create({
+      url: "/options.html"
+    });
+    window.close();
   });
-  window.close();
+
 });
