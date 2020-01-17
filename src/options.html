@@ -15,13 +15,13 @@
     </section>
     <section>
       <h2>Who are you?</h2>
-      <form id="userInfo" class="userInfo" autocomplete="on" action="">
+      <form id="userInfo" class="userInfo" autocomplete="on" action="post">
         <label for="firstName">First name</label>
-        <input required autocomplete="given-name" type="text" name="firstName" value="">
+        <input required autocomplete="given-name" type="text" id="userInfoFirstName" name="firstName" value="">
         <label for="lastName">Last name</label>
-        <input required autocomplete="family-name" type="text" name="lastName" value="">
+        <input required autocomplete="family-name" type="text" id="userInfoLastName" name="lastName" value="">
         <label for="email">Email address</label>
-        <input required autocomplete="email" type="email" name="email" value="">
+        <input required autocomplete="email" type="email" id="userInfoEmail" name="email" value="">
         <input type="submit" name="saveInfo" id="saveInfo" value="Submit">
       </form>
     </section>

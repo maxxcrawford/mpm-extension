@@ -21,12 +21,19 @@
     },
 
     "permissions": [
-				"<all_urls>",
-				"browsingData",
-				"cookies",
-				"tabs",
+        "<all_urls>",
+        "browsingData",
+        "contextualIdentities",
+        "cookies",
+        "management",
+        "storage",
+        "tabs",
+        "webRequestBlocking",
         "webRequest"
     ],
+
+
+
 
     "background": {
       "scripts": ["background.js"]
@@ -34,7 +41,7 @@
 
     "content_scripts": [
         {
-            "matches": ["<all_urls>"],
+            "matches": ["*://*.dunkindonuts.com/*"],
             "js": ["content-script.js"],
             "css": ["content-script.css"],
             "all_frames": true
