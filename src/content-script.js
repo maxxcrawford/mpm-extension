@@ -18,7 +18,7 @@
 
 	function dunkinDonutsCCPA() {
 		console.log("dunkinDonutsCCPA", userFillInfo);
-		let input = document.getElementById("parent_1_option_1");
+		let input = document.getElementById("RIGHT_TO_OPT_OUT_OPTIONS_1");
 		let email = document.getElementById("emailInput");
 
 		setTimeout(()=>{

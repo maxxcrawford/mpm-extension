@@ -10,33 +10,35 @@
 		"https://www.facebook.com/help/contact/784491318687824",
 	];
 
+	const syncData = null;
+
 	let userInfo = null;
 
 	function saveUserInfo(formInfo) {
 		console.log("saveUserInfo", formInfo);
-		browser.storage.local.set({
-			formInfo
-		});
+		// browser.storage.local.set({
+		// 	formInfo
+		// });
+		browser.storage.sync.set({
+	    formInfo
+	  });
 	}
 
 	async function getUserInfo() {
 		console.log("getUserInfo");
-		let formInfo = await browser.storage.local.get("formInfo");
+		let formInfo = await browser.storage.sync.get("formInfo");
 		console.log(formInfo);
 		let userInfo = formInfo.formInfo;
 		console.log(userInfo);
 		return userInfo;
+	}
 
-		// formInfo.then(value => {
-		// 	console.log(value.formInfo, userInfo);
-		// 	userInfo = value.formInfo;
-		// 	console.log(userInfo);
-		// 	return userInfo;
-    //   // parseMessage(value);
-    //  }, reason => {
-    //   // rejection
-    //   console.error(reason);
-    // });
+	async function syncUserInfo() {
+		console.log("syncUserInfo");
+		const storageInfo = browser.storage.sync.get("formInfo");
+	  storageInfo.then((res) => {
+	    console.log(res.formInfo);
+	  });
 	}
 
 	async function messageCatcher(request, sender, sendResponse) {
@@ -68,6 +70,8 @@
 	}
 
 	browser.runtime.onMessage.addListener(messageCatcher);
+
+	document.addEventListener('DOMContentLoaded', syncUserInfo);
 
 // let syncData = {
 // 	// If the shape of this data changes, bump this version number and creat a
