@@ -16,35 +16,37 @@
 
 	function saveUserInfo(formInfo) {
 		console.log("saveUserInfo", formInfo);
-		// browser.storage.local.set({
-		// 	formInfo
-		// });
-		browser.storage.sync.set({
-	    formInfo
-	  });
+		browser.storage.local.set({
+			formInfo
+		});
 	}
 
 	async function getUserInfo() {
-		console.log("getUserInfo");
-		let formInfo = await browser.storage.sync.get("formInfo");
-		console.log(formInfo);
+		let formInfo = await browser.storage.local.get("formInfo");
 		let userInfo = formInfo.formInfo;
-		console.log(userInfo);
 		return userInfo;
 	}
 
-	async function syncUserInfo() {
-		console.log("syncUserInfo");
-		const storageInfo = browser.storage.sync.get("formInfo");
-	  storageInfo.then((res) => {
-	    console.log(res.formInfo);
-	  });
+	// async function syncUserInfo() {
+	// 	const storageInfo = browser.storage.sync.get("formInfo");
+	//   storageInfo.then((res) => {
+	//   });
+	// }
+
+	function closeCurrentTab(sender) {
+		browser.tabs.remove(sender.tab.id);
 	}
 
 	async function messageCatcher(request, sender, sendResponse) {
 		console.log("messageCatcher", request.message);
 		console.log({request, sender, sendResponse});
 		switch (request.message) {
+			case "close-current-tab":
+				closeCurrentTab(sender);
+				return Promise.resolve({
+					message: "closing-current-tab",
+					response: "received"
+				});
 			case "get-supported-sites":
 				return Promise.resolve({
 					message: "send-supported-sites",
@@ -66,12 +68,11 @@
 					response: tempInfo
 				});
 		}
-
 	}
 
 	browser.runtime.onMessage.addListener(messageCatcher);
 
-	document.addEventListener('DOMContentLoaded', syncUserInfo);
+	// document.addEventListener('DOMContentLoaded', syncUserInfo);
 
 // let syncData = {
 // 	// If the shape of this data changes, bump this version number and creat a

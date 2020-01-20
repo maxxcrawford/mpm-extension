@@ -1,8 +1,6 @@
 "use strict";
 
 // TODO: On page, push notification to fix
-// TODO: Add logic to only run specific recipie based on URL
-// TODO: Use form to populate information
 {
 
 	console.log("content-script");
@@ -11,33 +9,40 @@
 
 	let userFillInfo = null;
 
-	function getUserInfo() {
-		console.log("getUserInfo");
-		sendMessage("get-ccpa-info");
+	function watchForSubmission() {
+		if ( document.getElementById("formSubmitSuccessModal").style.display !== "block" ){
+			setTimeout(()=>{
+				watchForSubmission();
+			}, 1000);
+		} else {
+			sendMessage("close-current-tab");
+		}
 	}
 
 	function dunkinDonutsCCPA() {
-		console.log("dunkinDonutsCCPA", userFillInfo);
+		console.log("dunkinDonutsCCPAv2", userFillInfo);
+		let input1 = document.getElementById("parent_1_option_1");
 		let input = document.getElementById("RIGHT_TO_OPT_OUT_OPTIONS_1");
 		let email = document.getElementById("emailInput");
 
 		setTimeout(()=>{
+			input1.click();
 			input.click();
-		}, 50);
+		}, 500);
 		setTimeout(()=>{
 			email.focus();
 			email.select();
 			email.value = userFillInfo.email;
 			email.blur();
-		}, 100);
+		}, 500);
 
 		const form = document.querySelector(".doNotSell__form");
 
 		setTimeout(()=>{
+			watchForSubmission();
 			let submit = form.querySelector("input[type=submit]");
 			submit.click();
-			// form.submit();
-		}, 150);
+		}, 500);
 
 	}
 
@@ -64,8 +69,6 @@
 				userFillInfo = value.response;
 				runRecipe(currentSiteHost)
 				break;
-				// console.log("parse: send-ccpa-info", value);
-				// return supportedSites = value.response;
 		}
 	}
 
@@ -80,7 +83,6 @@
 		});
 	}
 
-
 	function runRecipe(site) {
 		console.log("runRecipe", site, userFillInfo);
 		switch (site.host) {
@@ -93,7 +95,6 @@
 		}
 	}
 
-	getUserInfo();
-
+	sendMessage("get-ccpa-info");
 
 }

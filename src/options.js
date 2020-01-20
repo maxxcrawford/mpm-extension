@@ -48,10 +48,18 @@ console.log("options.js");
     });
   }
 
-
   document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded");
-    //
+    let buttons = document.querySelectorAll(".button");
+    for (let button of buttons) {
+      button.addEventListener('click', () => {
+        browser.tabs.create({
+          url: button.dataset.url,
+          active: true
+        });
+      });
+    }
+
   });
 
 }
