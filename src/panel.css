@@ -4,7 +4,11 @@ body {
   --dark-gray: #32313C;
   --gray: #494851;
   --light-gray: #737373;
-  --warning-black: #16151D;
+  --warning-black: #1E1D23;
+  --purple: #AD3BFF;
+  --dark-purple: #9023DF;
+  --red: #D70022;
+  --dark-red: #B50521;
 }
 
 html {
@@ -41,6 +45,10 @@ main {
   z-index: 1;
 }
 
+.svg {
+  -moz-context-properties: fill;
+}
+
 .title {
   height: 40px;
   display: flex;
@@ -63,10 +71,10 @@ h1 {
 section {
   display: block;
   width: 100%;
-  padding: 1rem;
+  padding: 1rem 0;
   border-bottom: 1px solid;
   border-bottom-color: var(--gray);
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 section:last-of-type {
@@ -86,21 +94,40 @@ button {
   font-size: 1em;
   display: flex;
   width: 100%;
-
+  cursor: pointer;
+  padding: 0.5rem 1rem;
 }
 
-button + button {
-  margin-top: 0.5rem;
-  /* outline: 1px solid red; */
+button:first-child {
+  margin-top: -0.5rem;
+}
+
+button:last-child {
+  margin-bottom: -0.5rem;
+}
+
+button:hover {
+  background: var(--gray);
+}
+
+.button-title {
+  display: flex;
 }
 
 .button-title img {
+  fill: var(--white);
   display: inline-block;
+  max-width: 16px;
   margin-right: 0.5rem;
 }
 
 button span {
   color: var(--white);
+  flex-grow: 1;
+}
+
+button div:first-child {
+  flex-grow: 2;
 }
 
 .button-title, .button-action {
@@ -109,6 +136,8 @@ button span {
 }
 
 .button-action img {
+  fill: var(--light-gray);
+  max-width: 16px;
   display: inline-block;
   margin-left: 0.5rem;
 }
@@ -118,17 +147,15 @@ button span {
 }
 
 .side-button {
-  /* outline: 1px solid green; */
   flex-direction: row;
-  flex-wrap: wrap;
   justify-content: space-between;
   /* align-items: flex-start; */
 }
 
 /* Cards */
 
-.cards {
-  padding-top: 0;
+section.cards {
+  padding: 1rem;
 }
 
 .card-site-title {
@@ -151,14 +178,58 @@ button span {
 .card-title {
   font-size: 16px;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.card-description {
+  line-height: 1.2rem;
+  padding-bottom: 0.75rem;
+}
+
+.card-title img {
+  fill: var(--white);
+  max-width: 16px;
+  margin-right: 0.5rem;
+  display: inline-block;
 }
 
 .card-action {
+  border-radius: 4px;
+  background: var(--purple);
+  text-align: center;
+  font-size: 16px;
+  padding: 0.5rem 0;
+  line-height: 1rem;
+  display: block;
+  width: 100%;
+  color: var(--white);
+  font-weight: bold;
+  transition: background 0.2s ease-out;
+  cursor: pointer;
+}
 
+.card-action:hover {
+  background: var(--dark-purple);
 }
 
 .card.warning {
   background: var(--warning-black);
+  background: repeating-linear-gradient(
+    -60deg,
+    var(--warning-black),
+    var(--warning-black) 15px,
+    #16151C 15px,
+    #16151C 30px
+  );
+}
+
+.card.warning .card-action {
+  background: var(--red);
+}
+
+.card.warning .card-action:hover {
+  background: var(--dark-red);
 }
 
 /*
