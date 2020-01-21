@@ -1,6 +1,8 @@
 "use strict";
 {
 
+	console.log("background");
+
 	// List of supported sites
 	const supportedSites = [
 		"https://www.dunkindonuts.com/en/consumer-rights",
@@ -94,6 +96,68 @@
 		});
 	}
 
+	// let activeTabHostname = null;
+	let activeTabURL = null;
+
+	function getActiveTabInfo(tab){
+		// console.log(typeof tab.url);
+		// console.log("setActiveTab", tab);
+		activeTabURL = new URL(tab.url);
+		console.log(activeTabURL);
+		// console.log(activeTabURL.hostname);
+		// activeTabHostname = activeTabURL.hostname;
+	};
+
+	function sendMessageToTabs(tabs) {
+		for (let tab of tabs) {
+			browser.tabs.sendMessage(
+				tab.id,
+				{greeting: "Hi from background script"}
+			).then(response => {
+				console.log("Message from the content script:");
+				console.log(response.response);
+			}).catch(
+				
+			);
+		}
+	}
+
+	function panelOpenWithAction(request){
+		console.log("panelOpenWithAction", request);
+		browser.tabs.create({
+			url: supportedSites[0],
+			active: true
+		});
+
+		browser.tabs.query({
+	    currentWindow: true,
+	    active: true
+  	}).then(sendMessageToTabs);
+
+
+
+		// chrome.tabs.query({}, tabs => {
+		//     tabs.forEach(tab => {
+		//     chrome.tabs.sendMessage(tab.id, msgObj);
+		//   });
+		// });
+
+		setTimeout(()=>{
+			console.log("timeout");
+			sendMessage({
+				message: "panel-action-open"
+			});
+		}, 50);
+		// let gettingCurrent = browser.tabs.getCurrent();
+		// gettingCurrent.then((res) => {
+		// 	console.log(res);
+		// });
+		// let currentTab = browser.tabs.getCurrent();
+		// console.log(currentTab);
+		//
+		// });
+	}
+
 	function closeCurrentTab(sender) {
 		browser.tabs.remove(sender.tab.id);
 	}
@@ -125,11 +189,43 @@
 					message: "send-ccpa-info",
 					response: tempInfo
 				});
+			case "panel-site-action":
+				console.log("panel-site-action");
+				panelOpenWithAction(request);
+				console.log(activeTabURL);
+				return Promise.resolve({
+					message: "panel-site-action-received",
+					url: activeTabURL
+				});
 		}
 	}
+
+	function sendMessage(data) {
+	  if (!data) { throw new Error("No message to send") }
+	  let sending = browser.runtime.sendMessage(data);
+	  sending.then(value => {
+	    console.log(value);
+	    // parseMessage(value);
+	  }, reason => {
+	    // rejection
+	    console.error(reason);
+	  });
+	}
+
 
 	browser.runtime.onMessage.addListener(messageCatcher);
 
 	// Fires syncUserInfo ONCE per browser start up
 	browser.storage.onChanged.addListener(logStorageChange);
+
+	browser.browserAction.onClicked.addListener((tab) => {
+	  // requires the "tabs" or "activeTab" permission
+		console.log("browser.browserAction.onClicked");
+		getActiveTabInfo(tab)
+		let panelURL = browser.runtime.getURL("/panel.html");
+		browser.browserAction.setPopup({popup: panelURL});
+		browser.browserAction.openPopup();
+
+	});
+
 }

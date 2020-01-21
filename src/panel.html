@@ -13,13 +13,13 @@
     </div>
     <main>
       <section>
-        <button type="button" name="button">
+        <button type="button" name="button" class="button">
           <div class="button-title">
             <img class="svg" src="/images/home-16.svg"/>
             <span>Open Mozilla Privacy Manager</span>
           </div>
         </button>
-          <button type="button" name="button">
+          <button type="button" name="button" class="button">
           <div class="button-title">
             <img class="svg" src="/images/search-16.svg"/>
             <span>Search All Recommendations</span>
@@ -27,7 +27,7 @@
         </button>
       </section>
       <section>
-        <button type="button" name="button" class="side-button">
+        <button type="button" name="button" class="side-button button">
           <div class="button-title">
             <img class="svg" src="/images/profile-active-16.svg"/>
             <span>Autofill Information</span>
@@ -37,7 +37,7 @@
             <img class="svg" src="/images/arrowhead-right-16.svg"/>
           </div>
         </button>
-          <button type="button" name="button" class="side-button">
+          <button type="button" name="button" class="side-button button">
           <div class="button-title">
             <img class="svg" src="/images/mail-16.svg"/>
             <span>Pending Confirmations</span>
@@ -61,7 +61,7 @@
           <div class="card-description">
             As a California resident you have the right to ask this website to not sell your personal information and activity.
           </div>
-          <div class="card-action">Opt Out</div>
+          <div class="card-action button" data-action="doNotSell" >Opt Out</div>
         </div>
         <div class="card">
           <div class="card-title">
@@ -71,7 +71,7 @@
           <div class="card-description">
             You can request all the data this website has about out. Click Request Data to receive a copy.
           </div>
-          <div class="card-action">Request Data</div>
+          <div class="card-action button" data-action="dataRequest" >Request Data</div>
         </div>
         <div class="card warning">
           <div class="card-title">
@@ -81,10 +81,9 @@
           <div class="card-description">
             Delete the personal this site keep about you.
           </div>
-          <div class="card-action">Request Data</div>
+          <div class="card-action button" data-action="deleteRequest" >Request Data</div>
         </div>
       </section>
-      <!-- <a href="#" class="button" id="getStarted">Get Started</a> -->
     </main>
   </body>
 </html>

@@ -47,11 +47,7 @@
 	}
 
 	// let supportedSites = null;
-	let supportedSites = [
-		"https://www.dunkindonuts.com/en/consumer-rights",
-		"https://www.facebook.com/settings?tab=facerec",
-		"https://www.facebook.com/help/contact/784491318687824",
-	];
+	let supportedSites = null;
 
 	function setSupportedSitesArray(value) {
 		if ( !supportedSites ) {
@@ -94,7 +90,19 @@
 				// throw new Error();
 		}
 	}
-
 	sendMessage("get-ccpa-info");
 
+
+	function messageCatcher(request, sender, sendResponse) {
+		console.log("messageCatcher", {request, sender, sendResponse});
+		switch (request.message) {
+			case "panel-action-open":
+				return Promise.resolve({
+					message: "panel-action-open-received",
+					response: "received"
+				});
+		}
+	}
+
+	browser.runtime.onMessage.addListener(messageCatcher);
 }
