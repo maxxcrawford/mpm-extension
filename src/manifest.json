@@ -12,12 +12,24 @@
     },
 
     "icons": {
-      "48": "icons/page-48.png"
+      "48": "/icons/page-48.png"
     },
 
     "browser_action": {
-        "default_icon": "icons/page-32.png",
-        "default_popup": "panel.html"
+        "default_icon": "/icons/page-32.png",
+        "default_popup": "panel.html",
+        "theme_icons": [
+          {
+              "light": "/icons/page-dark-16.png",
+              "dark": "/icons/page-dark-16.png",
+              "size": 16
+          },
+          {
+              "light": "/icons/page-dark-32.png",
+              "dark": "/icons/page-dark-32.png",
+              "size": 32
+          }
+        ]
     },
 
     "permissions": [
