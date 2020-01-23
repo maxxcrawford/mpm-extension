@@ -1,4 +1,17 @@
 body {
+  --white: #F2F2F3;
+  --black: #222123;
+  --dark-gray: #32313C;
+  --gray: #494851;
+  --light-gray: #737373;
+  --warning-black: #1E1D23;
+  --purple: #AD3BFF;
+  --dark-purple: #9023DF;
+  --red: #D70022;
+  --dark-red: #B50521;
+}
+
+body {
   font-family: "SF Pro Text", 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -19,7 +32,7 @@ body {
   padding: 2rem;
   transition: all .25s ease-in-out;
   position: relative;
-  background: #1C1B22;
+  background: var(--black);
   font-size: 16px;
 }
 
@@ -30,17 +43,17 @@ main {
 }
 
 section {
-	background: #494851;
+	background: var(--gray);
 	border-radius: 1rem 2rem 1rem 2rem;
   padding: 2rem;
   margin-bottom: 3rem;
 }
 
 h1, h2, p {
-  color: white;
+  color: var(--white);
 }
 
-h1, h2 {
+h1, h2, h3 {
   line-height: normal;
   margin: 0 0 1rem;
 }
@@ -55,16 +68,27 @@ p {
   display: inline-block;
   padding: 10px;
   text-align: center;
-  background: #AD3BFF;
-  color: white;
+  background: var(--purple);
+  color: var(--white);
   border-radius: 6px;
   text-decoration: none;
   transition: background 0.2s ease-out;
   margin-right: 1rem;
+  cursor: pointer;
 }
 
 .button:hover {
-  background: #982EE4;
+  background: var(--dark-purple);
+}
+
+.button.gray {
+  background: var(--dark-gray);
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.button.gray:hover {
+  background: var(--black);
 }
 
 .userInfo {
@@ -72,7 +96,7 @@ p {
 }
 
 .userInfo label {
-  color: white;
+  color: var(--white);
   padding: 0 0 0.5rem;
 }
 
@@ -89,4 +113,38 @@ p {
 .userInfo input, .userInfo label {
   display: block;
   width: 100%;
+}
+
+.entered-info-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.info-form, .entered-info {
+  display: none;
+}
+
+.info-form h3, .entered-info h3 {
+  color: var(--white);
+}
+
+.entered-info {
+  color: var(--white);
+}
+
+#form > h2 {
+  display: flex;
+  align-items: center;
+}
+
+#form > h2 img {
+  fill: var(--white);
+  display: inline-block;
+  width: 32px;
+  margin-right: 0.5rem;
+}
+
+.svg {
+  -moz-context-properties: fill;
 }

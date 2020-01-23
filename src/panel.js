@@ -27,6 +27,19 @@ function sendMessage(data) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  let buttonsURLs = document.querySelectorAll(".button-url");
+  for (let button of buttonsURLs) {
+    button.addEventListener('click', () => {
+      browser.tabs.create({
+        url: button.dataset.url,
+        active: true
+      });
+      window.close();
+    });
+    // window.close();
+  }
+
+
   let buttons = document.querySelectorAll(".button");
   for (let button of buttons) {
     button.addEventListener('click', () => {

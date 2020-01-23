@@ -9,27 +9,48 @@
 <body>
   <main>
     <h1>Mozilla Privacy Manager</h1>
-    <section>
+    <section id="intro">
       <h2>Lorem ipsum</h2>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
     </section>
-    <section>
-      <h2>Who are you?</h2>
-      <form id="userInfo" class="userInfo" autocomplete="on" action="post">
-        <label for="firstName">First name</label>
-        <input required autocomplete="given-name" type="text" id="userInfoFirstName" name="firstName" value="">
-        <label for="lastName">Last name</label>
-        <input required autocomplete="family-name" type="text" id="userInfoLastName" name="lastName" value="">
-        <label for="email">Email address</label>
-        <input required autocomplete="email" type="email" id="userInfoEmail" name="email" value="">
-        <input type="submit" name="saveInfo" id="saveInfo" value="Submit">
-      </form>
+    <section id="form">
+      <h2>
+        <img class="svg" src="/images/profile-active-16.svg"/>
+        <span>Autofill Information</span>
+      </h2>
+      <div class="entered-info">
+        <p>The information below is used to automatically submit CCPA requests. If we need more information to fill our a form, we'll ask for it.</p>
+        <div class="entered-info-content-wrapper">
+          <div class="entered-info-content">
+            <span data-field="profileName"></span>: <br>
+            <span data-field="firstName"></span> <span data-field="lastName"></span> <br/>
+            <span data-field="email"></span>
+          </div>
+          <div id="editButton" class=" button gray">Edit</div>
+        </div>
+      </div>
+      <div class="info-form">
+        <p><strong>Who are you?</strong> <br> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+        <form id="userInfo" class="userInfo" autocomplete="on" action="post">
+
+          <label for="profileName">Profile Name</label>
+          <input placeholder="Personal" required type="text" id="userInfoProfile" name="profileName" value="">
+          <label for="firstName">First name</label>
+          <input required autocomplete="given-name" type="text" id="userInfoFirstName" name="firstName" value="">
+          <label for="lastName">Last name</label>
+          <input required autocomplete="family-name" type="text" id="userInfoLastName" name="lastName" value="">
+          <label for="email">Email address</label>
+          <input required autocomplete="email" type="email" id="userInfoEmail" name="email" value="">
+          <input type="submit" name="saveInfo" id="saveInfo" value="Submit">
+        </form>
+      </div>
     </section>
-    <section>
+    <section id="actions">
       <h2>Dunkin Donuts</h2>
-      <a class="button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Request</a>
-      <a class="button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Delete</a>
-      <a class="button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Do Not Sell</a>
+      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Request</a>
+      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Delete</a>
+      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Do Not Sell</a>
     </section>
 
   </main>

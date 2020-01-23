@@ -24,7 +24,6 @@
 		});
 	}
 
-
 	const extensionData = {
 		init() {
 			let data = {
@@ -70,12 +69,14 @@
 	};
 
 	async function getUserInfo() {
+		console.log("async function getUserInfo");
 		let formInfo = await browser.storage.local.get("formInfo");
 		let userInfo = formInfo.formInfo;
 		return userInfo;
 	}
 
 	let syncCheck = false;
+	let tempInfo = null;
 
 	function logStorageChange(changes, area) {
 		if (area === "sync" && !syncCheck) {
@@ -117,13 +118,30 @@
 				console.log("Message from the content script:");
 				console.log(response.response);
 			}).catch(
-				
+
 			);
 		}
 	}
 
-	function panelOpenWithAction(request){
+	async function panelOpenWithAction(request){
 		console.log("panelOpenWithAction", request);
+
+		let userInfo = await getUserInfo();
+
+		if (!userInfo) {
+			browser.tabs.create({
+				url: "/options.html#form",
+				active: true
+			});
+
+			browser.tabs.query({
+		    currentWindow: true,
+		    active: true
+	  	}).then(sendMessageToTabs);
+
+			return;
+		}
+
 		browser.tabs.create({
 			url: supportedSites[0],
 			active: true
@@ -178,20 +196,21 @@
 				});
 			case "save-ccpa-info":
 				saveUserInfo(request.formInfo);
+				tempInfo = await getUserInfo();
 				return Promise.resolve({
-					message: "confirm-ccpa-info-saved",
-					response: "received"
+					message: "send-ccpa-info",
+					response: tempInfo
 				});
 			case "get-ccpa-info":
 				console.log("get-ccpa-info");
-				let tempInfo = await getUserInfo();
+				tempInfo = await getUserInfo();
 				return Promise.resolve({
 					message: "send-ccpa-info",
 					response: tempInfo
 				});
 			case "panel-site-action":
 				console.log("panel-site-action");
-				panelOpenWithAction(request);
+				await panelOpenWithAction(request);
 				console.log(activeTabURL);
 				return Promise.resolve({
 					message: "panel-site-action-received",
