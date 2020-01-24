@@ -343,4 +343,13 @@
 		color: "#F2F2F3"
 	});
 
+	function handleInstalled(details) {
+	  console.log(details.reason);
+	  browser.tabs.create({
+	    url: "/options.html"
+	  });
+	}
+
+	browser.runtime.onInstalled.addListener(handleInstalled);
+
 }
