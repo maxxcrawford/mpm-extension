@@ -18,13 +18,10 @@
 			return;
 		}
 
-		console.log("dunkinDonutsCCPA-init");
+		addOverlay("In Progress");
+		let overlay = document.querySelector(".mpm-body-loader-bar");
 
-		sendMessage({
-			message: "close-current-tab",
-			action: "doNotSell",
-			status: "pending"
-		});
+		console.log("dunkinDonutsCCPA-init");
 
 		function watchForSubmission() {
 			if ( document.getElementById("formSubmitSuccessModal").style.display !== "block" ){
@@ -47,18 +44,21 @@
 		setTimeout(()=>{
 			input1.click();
 			input.click();
+			overlay.style.width = "33%";
 		}, 500);
 		setTimeout(()=>{
 			email.focus();
 			email.select();
 			email.value = userFillInfo.email;
 			email.blur();
+			overlay.style.width = "66%";
 		}, 500);
 
 		const form = document.querySelector(".doNotSell__form");
 
 		setTimeout(()=>{
 			watchForSubmission();
+			overlay.style.width = "88%";
 			let submit = form.querySelector("input[type=submit]");
 			submit.click();
 		}, 500);
