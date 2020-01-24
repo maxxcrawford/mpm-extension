@@ -12,17 +12,26 @@
   </header>
   <main>
 
-    <!-- <section id="intro">
-      <h2>Lorem ipsum</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-    </section> -->
+    <section id="intro">
+      <h2>What does this extension do?</h2>
+      <p>This extension helps users manage their privacy by automating tasks for them. These tasks include updating social network privacy settings and filling out CCPA request forms.</p>
+      <h3>What's next?</h3>
+      <ul>
+        <li>Increase site actions</li>
+        <li>Support GDPR request forms</li>
+        <li>Promote other Firefox services like Monitor and VPN</li>
+        <li>Handle multiple autofill profiles</li>
+      </ul>
+    </section>
     <section id="form">
       <h2>
         <img class="svg" src="/images/profile-active-16.svg"/>
         <span>Autofill Information</span>
       </h2>
+      <p>The information below is used to automatically submit CCPA requests. If we need more information to fill out a form, we'll ask for it.</p>
+
       <div class="entered-info">
-        <p>The information below is used to automatically submit CCPA requests. If we need more information to fill our a form, we'll ask for it.</p>
+
         <div class="entered-info-content-wrapper">
           <div class="entered-info-content">
             <span data-field="profileName"></span>: <br>
@@ -30,12 +39,12 @@
             <span data-field="email"></span>
           </div>
           <!-- TODO: Add cancel button when editing existing info -->
-          <div id="editButton" class=" button gray">Edit</div>
+          <div id="editButton" class="button gray">Edit</div>
         </div>
       </div>
       <div class="info-form">
 
-        <p id="firstTimeForm"><strong>Who are you?</strong> <br> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <!-- <p id="firstTimeForm"><strong>Who are you?</strong> <br> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p> -->
 
         <form id="userInfo" class="userInfo" autocomplete="on" action="post">
 
@@ -47,23 +56,26 @@
           <input required autocomplete="family-name" type="text" id="userInfoLastName" name="lastName" value="">
           <label for="email">Email address</label>
           <input required autocomplete="email" type="email" id="userInfoEmail" name="email" value="">
-          <input type="submit" name="saveInfo" id="saveInfo" value="Save">
+          <input class="button" type="submit" name="saveInfo" id="saveInfo" value="Save">
         </form>
       </div>
     </section>
     <h1>All Recommendations</h1>
-    <section id="actions">
-      <h2>Facebook</h2>
-      <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">Request Data</a>
-      <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">Delete</a>
-      <a class="action-button button" data-url="https://www.facebook.com/settings?tab=facerec">Disable Facial Recognition</a>
-    </section>
-    <section id="actions">
-      <h2>Dunkin Donuts</h2>
-      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Do Not Sell</a>
-      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Request Data</a>
-      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Delete Data</a>
-    </section>
+    <div id="actions">
+      <section class="action-section">
+        <h3>Facebook</h3>
+        <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">Request Data</a>
+        <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">Delete</a>
+        <a class="action-button button" data-url="https://www.facebook.com/settings?tab=facerec">Disable Facial Recognition</a>
+      </section>
+      <section class="action-section">
+        <h3>Dunkin Donuts</h3>
+        <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Do Not Sell</a>
+        <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Request Data</a>
+        <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Delete Data</a>
+      </section>
+    </div>
+
   </main>
   <script src="options.js"></script>
 </body>

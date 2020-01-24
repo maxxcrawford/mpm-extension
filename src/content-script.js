@@ -8,11 +8,23 @@
 	const currentSiteHost = window.location;
 
 	let userFillInfo = null;
+	let activeAction = null;
 
+	function dunkinDonutsCCPA(site) {
+		console.log("dunkinDonutsCCPA", userFillInfo);
 
+		if (site.href !== "https://www.dunkindonuts.com/en/consumer-rights") {
+			console.log("not-dunkinDonutsCCPA");
+			return;
+		}
 
-	function dunkinDonutsCCPA() {
-		console.log("dunkinDonutsCCPAv2", userFillInfo);
+		console.log("dunkinDonutsCCPA-init");
+
+		sendMessage({
+			message: "close-current-tab",
+			action: "doNotSell",
+			status: "pending"
+		});
 
 		function watchForSubmission() {
 			if ( document.getElementById("formSubmitSuccessModal").style.display !== "block" ){
@@ -20,7 +32,11 @@
 					watchForSubmission();
 				}, 1000);
 			} else {
-				sendMessage("close-current-tab");
+				sendMessage({
+					message: "close-current-tab",
+					action: "doNotSell",
+					status: "pending"
+				});
 			}
 		}
 
@@ -58,7 +74,13 @@
 	}
 
 	function parseMessage(value){
+		console.log("cs: ", value.message);
 		switch (value.message) {
+			case "panel-site-action-received":
+				console.log("panel-site-action-received", value.action);
+				activeAction = value.action
+				break;
+
 			case "send-supported-sites":
 				setSupportedSitesArray(value);
 				break;
@@ -70,15 +92,46 @@
 		}
 	}
 
-	function sendMessage(message) {
-		if (!message) { throw new Error("No message to send") }
-		let sending = browser.runtime.sendMessage({message: message});
+	function sendMessage(data) {
+		if (!data.message) { throw new Error("No message to send") }
+		let sending = browser.runtime.sendMessage(data);
 		sending.then(value => {
 			parseMessage(value);
 		}, reason => {
 			// rejection
 			console.error(reason);
 		});
+	}
+
+	function addOverlay(message, url) {
+		console.log(message);
+		let overlay = document.createElement("div");
+		overlay.className = "mpm-body-overlay"
+		document.querySelector("html").insertAdjacentElement("afterbegin", overlay);
+
+		let loaderBar = document.createElement("div");
+		loaderBar.className = "mpm-body-loader-bar"
+		document.querySelector(".mpm-body-overlay").insertAdjacentElement("afterbegin", loaderBar);
+
+		if (message) {
+			let messageContainer = document.createElement("div");
+			messageContainer.className = "mpm-body-overlay-message";
+			messageContainer.innerText = message;
+			document.querySelector(".mpm-body-overlay").insertAdjacentElement(
+				"afterbegin", messageContainer
+			);
+
+			if (url) {
+				console.log(url.host);
+				let link = document.createElement("a");
+				link.className = "mpm-body-overlay-link";
+				link.href = url.origin;
+				link.innerText = url.host;
+				document.querySelector(".mpm-body-overlay-message").insertAdjacentElement(
+					"beforeend", link
+				);
+			}
+		}
 	}
 
 	function facebookAIOptOut(site) {
@@ -88,6 +141,15 @@
 			console.log("not-facebookAIOptOut");
 			return;
 		}
+
+		if ( document.querySelector("h1").textContent.includes("Sorry") ) {
+			addOverlay("Not logged in!", window.location);
+			return;
+		}
+
+		addOverlay("In Progress");
+		let overlay = document.querySelector(".mpm-body-loader-bar");
+		console.log(overlay);
 
 		console.log("facebookAIOptOut");
 
@@ -102,7 +164,12 @@
 				}, 1000);
 			} else {
 				closeButton.click();
-				sendMessage("close-current-tab");
+				overlay.style.width = "100%";
+				sendMessage({
+					message: "close-current-tab",
+					action: "facialRecognition",
+					status: "pending"
+				});
 			}
 
 
@@ -114,8 +181,9 @@
 				if (onboarding) {
 					let onboardingButton = onboarding.querySelector("button");
 					onboardingButton.click();
+					overlay.style.width = "33%";
 				}
-			}, 500);
+			}, 750);
 
 			setTimeout(()=>{
 				let turnOffButtonWrapper = document.querySelector("div[data-testid='parent_deny_consent_button']");
@@ -123,40 +191,42 @@
 				if (turnOffButtonWrapper) {
 					let turnOffButton = turnOffButtonWrapper.querySelector("button");
 					turnOffButton.click();
+					overlay.style.width = "66%";
 				}
-			}, 1000);
+			}, 750);
 
 			setTimeout(()=>{
-				sendMessage("close-current-tab");
-			}, 500);
+				overlay.style.width = "100%";
+				sendMessage({ message:"close-current-tab" });
+			}, 750);
 		}
 
 		function defaultJourney() {
 			let editButton = document.querySelector(".fbSettingsListItemEditText");
 			setTimeout(()=>{
+				overlay.style.width = "20%";
 				editButton.click();
-			}, 500);
+			}, 750);
 
 			setTimeout(()=>{
 				let fbSettingsListItem = document.querySelector(".fbSettingsListItem");
 				let uiPopover = fbSettingsListItem.querySelector(".uiPopover");
 				let dropdownButton = uiPopover.querySelector("a");
 				dropdownButton.click();
+				overlay.style.width = "40%";
 			}, 750);
 
 			setTimeout(()=>{
 				let uiContextualLayerPositioner = document.querySelector(".uiContextualLayerPositioner");
 				let menu = uiContextualLayerPositioner.querySelector("ul");
 				menu.lastChild.click();
+				overlay.style.width = "60%";
 			}, 750);
 
 			setTimeout(()=>{
+				overlay.style.width = "80%";
 				watchForSubmission();
 			}, 750);
-
-			setTimeout(()=>{
-				// sendMessage("close-current-tab");
-			}, 500);
 
 		}
 
@@ -170,8 +240,6 @@
 			}
 
 		}, 500);
-
-
 	}
 
 	function runRecipe(site) {
@@ -181,14 +249,14 @@
 				facebookAIOptOut(site);
 				break;
 			case "www.dunkindonuts.com":
-				dunkinDonutsCCPA();
+				dunkinDonutsCCPA(site);
 				break;
 			default:
 				console.error(`No recipe found for ${site}`);
 				// throw new Error();
 		}
 	}
-	sendMessage("get-ccpa-info");
+	sendMessage({message: "get-ccpa-info"});
 
 
 	function messageCatcher(request, sender, sendResponse) {

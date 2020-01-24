@@ -37,6 +37,10 @@ body {
   text-align: left;
 }
 
+body > div {
+  display: none;
+}
+
 main {
   padding: 0;
   margin: 0;
@@ -54,6 +58,7 @@ main {
   display: flex;
   width: 100%;
   align-items: center;
+  position: relative;
 }
 
 h1 {
@@ -72,8 +77,7 @@ section {
   display: block;
   width: 100%;
   padding: 1rem 0;
-  border-bottom: 1px solid;
-  border-bottom-color: var(--gray);
+  border-bottom: 1px solid var(--gray);
   margin-bottom: 0;
 }
 
@@ -237,25 +241,91 @@ section.cards {
   background: var(--dark-red);
 }
 
-/*
-p {
+/* confirmations panel */
+
+.confirmations section {
+  padding: 1rem;
+  color: var(--white);
+}
+
+.confirmations-intro {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--gray);
+}
+
+.confirmations-intro img {
+  fill: var(--white);
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin-right: 1rem;
+}
+
+.confirmations-intro p {
   margin: 0 0 1rem;
   padding: 0;
-  line-height: 1.5rem;
 }
 
-.button {
-  display: block;
-  padding: 10px;
-  text-align: center;
-  background: #ED00B5;
-  color: white;
-  border-radius: 6px 12px 6px 12px;
-  left: 0;
-  text-decoration: none;
+.confirmation-button {
+  padding: 0.25rem 1rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.confirmation-button:hover {
+  background: var(--gray);
+}
+
+.confirmation-button img {
+  fill: var(--white);
+  display: inline-block;
+  max-width: 16px;
+  margin-right: 0.5rem;
+}
+
+.confirmations .confirmation-buttons {
+  padding: 0.5rem 0;
+  margin-bottom: 0;
+}
+
+.confirmations-wrapper-header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  color: var(--light-gray);
+  font-size: 13px;
+  margin-bottom: 0.25rem;
+}
+
+.site {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.title .back-button {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 16px;
+  cursor: pointer;
   transition: background 0.2s ease-out;
+  padding: 0 0.5rem;
 }
 
-.button:hover {
-  background: #AD3BFF;
-} */
+.title .back-button .svg {
+  fill: var(--white);
+  width: 16px;
+}
+
+.title .back-button:hover {
+  background: var(--dark-gray);
+}

@@ -41,6 +41,12 @@ function updateAutofill(resp) {
   }
 }
 
+function getActiveCards(data) {
+  sendMessage({
+    message: "get-active-cards"
+  });
+}
+
 function buildCards(actions) {
   console.log(actions);
   let actionsData = actions.actions;
@@ -97,23 +103,30 @@ function buildCards(actions) {
 
 }
 
+function updatePendingActionsCount(count) {
+  document.querySelector("#pendingActionsCount").innerText = count;
+}
+
 function parseMessage(value){
   console.log(value);
   if (!value) { return }
   switch (value.message) {
-    case "panel-site-action-received":
-      console.log("open-site");
-      break;
     case "sites-recommendation-results":
       toggleSiteRecommendations(value);
       break;
     case "send-ccpa-info":
       updateAutofill(value);
       break;
-    case "send-action-cards":
+    case "send-active-cards":
+      console.log("caught");
+      getActiveCards(value.actions);
+      break;
+    case "send-action-cards-assets":
       console.log("caught");
       buildCards(value.actions);
       break;
+    case "send-pending-actions-count":
+      updatePendingActionsCount(value.response)
   }
 }
 
@@ -129,11 +142,60 @@ function sendMessage(data) {
   });
 }
 
+function changePanel(panel) {
+  let confirmationsBody = document.getElementById("confirmations", panel);
+  let homeBody = document.getElementById("home");
+
+  switch (panel) {
+    case "home":
+      homeBody.style.display = "block";
+      confirmationsBody.style.display = "none";
+      break;
+    case "confirmations":
+      homeBody.style.display = "none";
+      confirmationsBody.style.display = "block";
+      break;
+    default:
+      console.error(`No panel found for #${panel}`);
+  }
+
+}
+
+
+function confirmationsListenerInit(){
+
+  let buttonConfirmations = document.querySelector(".button-confirmations");
+  buttonConfirmations.addEventListener('click', () => {
+    // console.log(backButton);
+    changePanel("confirmations");
+  });
+
+  let confirmationsForm = document.querySelector("#confirmationsList");
+  let checkBoxes = confirmationsForm.querySelectorAll("input[type='checkbox']")
+  // console.log("confirmationsListenerInit", confirmationsForm);
+
+  let selectAllButton = document.querySelector(".confirmation-button");
+  selectAllButton.addEventListener('click', () => {
+    checkBoxes.forEach( checkbox => checkbox.checked = true);
+  });
+
+  let backButton = document.querySelector(".back-button");
+  backButton.addEventListener('click', () => {
+    // console.log(backButton);
+    changePanel("home");
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
-  sendMessage({message: "check-for-site-recommendations"});
+  let homeBody = document.getElementById("home");
+  homeBody.style.display = "block";
 
+  sendMessage({message: "get-pending-actions-count"});
+  sendMessage({message: "check-for-site-recommendations"});
   sendMessage({message: "get-ccpa-info"});
+
+  confirmationsListenerInit();
 
   let buttonsURLs = document.querySelectorAll(".button-url");
   for (let button of buttonsURLs) {
@@ -145,6 +207,14 @@ document.addEventListener('DOMContentLoaded', () => {
       window.close();
     });
   }
+
+
+
+  let buttonConfirmationsPanel = document.querySelector(".button-confirmations");
+  buttonConfirmationsPanel.addEventListener('click', () => {
+    console.log("buttonConfirmationsPanel");
+  });
+
 });
 
 }

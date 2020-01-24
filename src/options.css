@@ -54,6 +54,10 @@ main {
 	margin: 0 auto;
 }
 
+#intro {
+  color: var(--white);
+}
+
 section {
 	background: var(--gray);
 	border-radius: 1rem 2rem 1rem 2rem;
@@ -61,13 +65,40 @@ section {
   margin-bottom: 3rem;
 }
 
-h1, h2, p {
+h1, h2, h3, p {
   color: var(--white);
 }
 
 h1, h2, h3 {
   line-height: normal;
   margin: 0 0 1rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+h3 {
+  font-size: 1rem;
+  color: var(--white);
+}
+
+@media all and (min-width: 600px){
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+  .button {
+    margin-bottom: 1rem;
+  }
 }
 
 p {
@@ -127,6 +158,12 @@ p {
   width: 100%;
 }
 
+.userInfo input.button {
+  width: auto;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
 .entered-info-content-wrapper {
   display: flex;
   justify-content: space-between;
@@ -159,4 +196,10 @@ p {
 
 .svg {
   -moz-context-properties: fill;
+}
+
+.action-section {
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
 }

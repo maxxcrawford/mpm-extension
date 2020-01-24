@@ -7,61 +7,112 @@
     <script src="panel.js"></script>
   </head>
   <body class="panel">
-    <!-- <img class="svg" src="/images/blob.svg" class="blob" alt=""> -->
-    <div class="title">
-      <h1>Mozilla Privacy Manager</h1>
+    <div id="confirmations">
+      <div class="title">
+        <h1>Pending Confirmations</h1>
+        <div class="back-button">
+          <img class="svg" src="/images/arrowhead-left-16.svg"/>
+        </div>
+      </div>
+      <main class="confirmations">
+        <section class="confirmations-intro">
+          <img class="svg" src="/images/mail-16.svg"/>
+          <div class="">
+            <p>These sites have sent you confirmation emails that are required to complete the privacy action you requested.</p>
+            <p>After clicking on the confirmation links in your email, mark the entry below as complete. </p>
+          </div>
+        </section>
+        <section class="confirmations-wrapper">
+          <!-- TODO: Add Dates Organization -->
+          <div class="confirmations-wrapper-header">
+            <span>Date</span>
+            <span>Complete</span>
+          </div>
+          <form id="confirmationsList" class="" action="index.html" method="post">
+            <div class="site">
+              <label for="site1" class="site-name">
+                <img src="//placehold.it/16x16/554DF7/FFFFFF"/>
+                <span>Amazon.com</span>
+              </label>
+              <input type="checkbox" id="site1" name="" value="">
+            </div>
+            <div class="site">
+              <label for="site2" class="site-name">
+                <img src="//placehold.it/16x16/554DF7/FFFFFF"/>
+                <span>Amazon.com</span>
+              </label>
+              <input type="checkbox" id="site2" value="">
+            </div>
+          </form>
+        </section>
+        <section class="confirmation-buttons">
+          <div class="button confirmation-button ">
+            <img class="svg" src="/images/check-16.svg"/>
+            <span>Mark All Complete</span>
+          </div>
+          <div class="button confirmation-button ">
+            <img class="svg" src="/images/collection-16.svg?v=1"/>
+            <span>View Completed</span>
+          </div>
+        </section>
+      </main>
     </div>
-    <main>
-      <section>
-        <button type="button" data-url="/options.html" name="button" class="button-url">
-          <div class="button-title">
-            <img class="svg" src="/images/home-16.svg"/>
-            <span>Open Mozilla Privacy Manager</span>
-          </div>
-        </button>
+    <div id="home">
+      <div class="title">
+        <h1>Mozilla Privacy Manager</h1>
+      </div>
+      <main>
+        <section>
+          <button type="button" data-url="/options.html" name="button" class="button-url">
+            <div class="button-title">
+              <img class="svg" src="/images/home-16.svg"/>
+              <span>Open Mozilla Privacy Manager</span>
+            </div>
+          </button>
           <button type="button" data-url="/options.html#actions" name="button" class="button-url">
-          <div class="button-title">
-            <img class="svg" src="/images/search-16.svg"/>
-            <span>Search All Recommendations</span>
+            <div class="button-title">
+              <img class="svg" src="/images/search-16.svg"/>
+              <span>Search All Recommendations</span>
+            </div>
+          </button>
+        </section>
+        <section>
+          <button type="button" name="button" data-url="/options.html#form" class="side-button button-url">
+            <div class="button-title">
+              <img class="svg" src="/images/profile-active-16.svg"/>
+              <span>Autofill Information</span>
+            </div>
+            <div class="button-action">
+              <span name="profileName">Personal</span>
+              <img class="svg" src="/images/arrowhead-right-16.svg"/>
+            </div>
+          </button>
+          <button type="button" name="button" class="side-button button button-confirmations">
+            <div class="button-title">
+              <img class="svg" src="/images/mail-16.svg"/>
+              <span>Pending Confirmations</span>
+            </div>
+            <div class="button-action">
+              <span id="pendingActionsCount">7</span>
+              <img class="svg" src="/images/arrowhead-right-16.svg"/>
+            </div>
+          </button>
+        </section>
+        <section class="cards">
+          <div class="card-site-empty">
+            <div class="card-site-title">
+              <span>There are no recommendations for </span>
+              <span name="activeTab"></span>
+            </div>
           </div>
-        </button>
-      </section>
-      <section>
-        <button type="button" name="button" data-url="/options.html#form" class="side-button button-url">
-          <div class="button-title">
-            <img class="svg" src="/images/profile-active-16.svg"/>
-            <span>Autofill Information</span>
+          <div class="card-site-not-empty">
+            <div class="card-site-title">
+              <span>Recommendations for </span>
+              <span name="activeTab"></span>
+            </div>
           </div>
-          <div class="button-action">
-            <span name="profileName">Personal</span>
-            <img class="svg" src="/images/arrowhead-right-16.svg"/>
-          </div>
-        </button>
-          <button type="button" name="button" class="side-button button">
-          <div class="button-title">
-            <img class="svg" src="/images/mail-16.svg"/>
-            <span>Pending Confirmations</span>
-          </div>
-          <div class="button-action">
-            <span>7</span>
-            <img class="svg" src="/images/arrowhead-right-16.svg"/>
-          </div>
-        </button>
-      </section>
-      <section class="cards">
-        <div class="card-site-empty">
-          <div class="card-site-title">
-            <span>There are no recommendations for </span>
-            <span name="activeTab"></span>
-          </div>
-        </div>
-        <div class="card-site-not-empty">
-          <div class="card-site-title">
-            <span>Recommendations for </span>
-            <span name="activeTab"></span>
-          </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </div>
   </body>
 </html>
