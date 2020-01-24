@@ -51,9 +51,11 @@ console.log("options.js");
     console.log(resp.response);
     if (resp.response === undefined) {
       console.log("populateSubmissionForm-undefined");
+      infoDisplayWrapper.style.display = "none";
       infoFormWrapper.style.display = "block";
     } else {
-      console.log("populateSubmissionForm-else");
+      // console.log("populateSubmissionForm-else");
+      infoFormWrapper.style.display = "none";
       infoDisplayWrapper.style.display = "block";
       let enteredInfoSpans = document.querySelectorAll(".entered-info-content span");
       for (let field of enteredInfoSpans) {

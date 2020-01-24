@@ -154,6 +154,11 @@ button div:first-child {
 
 /* Cards */
 
+.card-site-not-empty,
+.card-site-empty {
+  display: none;
+}
+
 section.cards {
   padding: 1rem;
 }

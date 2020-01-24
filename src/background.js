@@ -7,10 +7,14 @@
 	const supportedSites = [
 		"https://www.dunkindonuts.com/en/consumer-rights",
 		"https://www.facebook.com/settings?tab=facerec",
-		"https://www.facebook.com/help/contact/784491318687824",
-		"sample-site",
-		"sample-site2",
+		"https://www.facebook.com/help/contact/784491318687824"
 	];
+
+	// const supportedSiteActions = {
+	// "www.dunkindonuts.com": [{
+	//
+	// 	}]
+	// }
 
 	let userInfo = null;
 
@@ -104,10 +108,66 @@
 		// console.log(typeof tab.url);
 		// console.log("setActiveTab", tab);
 		activeTabURL = new URL(tab.url);
-		console.log(activeTabURL);
+		// console.log(activeTabURL);
 		// console.log(activeTabURL.hostname);
 		// activeTabHostname = activeTabURL.hostname;
 	};
+
+	async function queryTabInfo() {
+		// console.log("queryTabInfo");
+		// let url;
+		// let querying = browser.tabs.query({currentWindow: true, active: true});
+		//
+		// querying.then( (tabs) => {
+		// 	// console.log(tabs[0].url);
+		// 	// console.log(tabs[0]);
+		// 	// activeTabURL = tabs[0].url;
+		// 	// console.log(activeTabURL);
+		//
+		// 	return Promise.resolve({
+		// 		url: tabs[0].url
+		// 	});
+		//
+		// 	// for (let tab of tabs) {
+    // 	// // tab.url requires the `tabs` permission
+		// 	//
+		// 	// 	// url = tab.url;
+		// 	// 	// console.log(url);
+		// 	// 	 console.log(tab.url);
+		// 	// 	 // return Promise.resolve(tab.url);
+		// 	// 	// return {url: tab.url};
+		// 	// 	// activeTabURL = new URL(tab.url);
+		// 	// 	// console.log(activeTabURL);
+		//   // }
+		// }).catch(
+		//
+		// );
+
+
+
+
+
+	}
+
+	async function checkForRecommendations(){
+		let currentTab = await browser.tabs.query({active: true, currentWindow: true});
+		let currentTabURL = new URL(currentTab[0].url);
+
+		for (let site of supportedSites) {
+			let siteURL = new URL(site);
+			if (currentTabURL.hostname === siteURL.hostname) {
+				return {
+					recommendations: true,
+					url: currentTabURL
+				}
+			} else {
+				return {
+					recommendations: false,
+					url: currentTabURL
+				}
+			}
+		}
+	}
 
 	function sendMessageToTabs(tabs) {
 		for (let tab of tabs) {
@@ -194,6 +254,12 @@
 					message: "send-supported-sites",
 					response: supportedSites
 				});
+			case "check-for-site-recommendations":
+				let siteRecommendations = await checkForRecommendations();
+				return Promise.resolve({
+					message: "sites-recommendation-results",
+					response: siteRecommendations
+				});
 			case "save-ccpa-info":
 				saveUserInfo(request.formInfo);
 				tempInfo = await getUserInfo();
@@ -240,11 +306,9 @@
 	browser.browserAction.onClicked.addListener((tab) => {
 	  // requires the "tabs" or "activeTab" permission
 		console.log("browser.browserAction.onClicked");
-		getActiveTabInfo(tab)
 		let panelURL = browser.runtime.getURL("/panel.html");
 		browser.browserAction.setPopup({popup: panelURL});
 		browser.browserAction.openPopup();
-
 	});
 
 }
