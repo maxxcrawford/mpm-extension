@@ -9,7 +9,6 @@ console.log("options.js");
   const infoDisplayWrapper = document.querySelector(".entered-info");
   const infoFormWrapper = document.querySelector(".info-form");
 
-
   function ccpaInfoCapture() {
     const info = {
       profileName: document.getElementById("userInfoProfile").value,
@@ -29,14 +28,17 @@ console.log("options.js");
     e.preventDefault();
     infoDisplayWrapper.style.display = "none";
     infoFormWrapper.style.display = "block";
+    document.querySelector("#firstTimeForm").style.display = "none";
+    console.log(autoFillData);
+    let formInputs = document.querySelectorAll("#userInfo input");
+    for (let input of formInputs) {
+      console.log(input);
+      let data = input.name;
+      if ( autoFillData[data] ) {
+        input.value = autoFillData[data]
+      }
+    }
   });
-
-  // function parseMessage(value){
-  // 	switch (value.message) {
-  // 		case "get-supported-sites":
-  // 			setSupportedSitesArray(value);
-  // 	}
-  // }
 
   function saveSubmissionInfo() {
     console.log("saveSubmissionInfo");
@@ -46,6 +48,8 @@ console.log("options.js");
       formInfo
     });
   }
+
+  let autoFillData = {};
 
   function populateSubmissionForm(resp) {
     console.log(resp.response);
@@ -57,10 +61,10 @@ console.log("options.js");
       // console.log("populateSubmissionForm-else");
       infoFormWrapper.style.display = "none";
       infoDisplayWrapper.style.display = "block";
+      autoFillData = resp.response;
       let enteredInfoSpans = document.querySelectorAll(".entered-info-content span");
       for (let field of enteredInfoSpans) {
         let data = field.dataset.field;
-        console.log(data);
         field.innerText = resp.response[data]
       }
 

@@ -19,6 +19,10 @@ function toggleSiteRecommendations(resp){
   })
   // console.log("toggleSiteRecommendations", resp);
   if (resp.response.recommendations) {
+    sendMessage({
+      message: "request-action-cards",
+      site: url
+    });
     document.querySelector(".card-site-not-empty").style.display = "block";
   } else {
     document.querySelector(".card-site-empty").style.display = "block";
@@ -37,8 +41,65 @@ function updateAutofill(resp) {
   }
 }
 
+function buildCards(actions) {
+  console.log(actions);
+  let actionsData = actions.actions;
+  let actionsURLs = actions.urls;
+
+  let actionsContainer = document.querySelector(".card-site-not-empty");
+
+  actionsData.forEach( item => {
+    let card = document.createElement("div");
+    card.className = "card";
+    if (item.warning) { card.classList.add("warning") }
+
+    // Build Title
+    let cardTitle = document.createElement("div");
+    cardTitle.className = "card-title";
+    let cardTitleIcon = document.createElement("img");
+    cardTitleIcon.className = "svg";
+    cardTitleIcon.src = item.icon;
+    let cardTitleText = document.createElement("span");
+    cardTitleText.innerText = item.title;
+    cardTitle.insertAdjacentElement("beforeend", cardTitleIcon);
+    cardTitle.insertAdjacentElement("beforeend", cardTitleText);
+    card.insertAdjacentElement("beforeend", cardTitle);
+
+    // Build Description
+    let cardDescription = document.createElement("div");
+    cardDescription.className = "card-description";
+    cardDescription.innerText = item.description;
+    card.insertAdjacentElement("beforeend", cardDescription);
+
+    // Build Action
+    let cardAction = document.createElement("div");
+    cardAction.className = "card-action";
+    cardAction.classList.add("button");
+    cardAction.innerText = item.cta;
+    cardAction.dataset.action = item.action
+    cardAction.dataset.url = actionsURLs[item.action]
+
+    card.insertAdjacentElement("beforeend", cardAction);
+
+    actionsContainer.insertAdjacentElement("beforeend", card);
+  });
+
+  let cardActions = document.querySelectorAll(".card-action");
+  for (let action of cardActions) {
+    action.addEventListener('click', () => {
+      sendMessage({
+        message: "panel-site-action",
+        action: action.dataset.action,
+        url: action.dataset.url
+      })
+    });
+  }
+
+}
+
 function parseMessage(value){
   console.log(value);
+  if (!value) { return }
   switch (value.message) {
     case "panel-site-action-received":
       console.log("open-site");
@@ -48,6 +109,10 @@ function parseMessage(value){
       break;
     case "send-ccpa-info":
       updateAutofill(value);
+      break;
+    case "send-action-cards":
+      console.log("caught");
+      buildCards(value.actions);
       break;
   }
 }
@@ -78,19 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         active: true
       });
       window.close();
-    });
-    // window.close();
-  }
-
-
-  let buttons = document.querySelectorAll(".button");
-  for (let button of buttons) {
-    button.addEventListener('click', () => {
-      // console.log( button.dataset.action );
-      sendMessage({
-        message: "panel-site-action",
-        action: button.dataset.action
-      })
     });
   }
 });

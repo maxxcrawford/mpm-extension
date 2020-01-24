@@ -7,8 +7,11 @@
   </head>
 
 <body>
-  <main>
+  <header>
     <h1>Mozilla Privacy Manager</h1>
+  </header>
+  <main>
+
     <!-- <section id="intro">
       <h2>Lorem ipsum</h2>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
@@ -26,11 +29,13 @@
             <span data-field="firstName"></span> <span data-field="lastName"></span> <br/>
             <span data-field="email"></span>
           </div>
+          <!-- TODO: Add cancel button when editing existing info -->
           <div id="editButton" class=" button gray">Edit</div>
         </div>
       </div>
       <div class="info-form">
-        <p><strong>Who are you?</strong> <br> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+        <p id="firstTimeForm"><strong>Who are you?</strong> <br> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 
         <form id="userInfo" class="userInfo" autocomplete="on" action="post">
 
@@ -42,17 +47,23 @@
           <input required autocomplete="family-name" type="text" id="userInfoLastName" name="lastName" value="">
           <label for="email">Email address</label>
           <input required autocomplete="email" type="email" id="userInfoEmail" name="email" value="">
-          <input type="submit" name="saveInfo" id="saveInfo" value="Submit">
+          <input type="submit" name="saveInfo" id="saveInfo" value="Save">
         </form>
       </div>
     </section>
+    <h1>All Recommendations</h1>
+    <section id="actions">
+      <h2>Facebook</h2>
+      <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">Request Data</a>
+      <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">Delete</a>
+      <a class="action-button button" data-url="https://www.facebook.com/settings?tab=facerec">Disable Facial Recognition</a>
+    </section>
     <section id="actions">
       <h2>Dunkin Donuts</h2>
-      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Request</a>
-      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Delete</a>
       <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Do Not Sell</a>
+      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Request Data</a>
+      <a class="action-button button" data-url="https://www.dunkindonuts.com/en/consumer-rights">Delete Data</a>
     </section>
-
   </main>
   <script src="options.js"></script>
 </body>

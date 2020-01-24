@@ -9,18 +9,21 @@
 
 	let userFillInfo = null;
 
-	function watchForSubmission() {
-		if ( document.getElementById("formSubmitSuccessModal").style.display !== "block" ){
-			setTimeout(()=>{
-				watchForSubmission();
-			}, 1000);
-		} else {
-			sendMessage("close-current-tab");
-		}
-	}
+
 
 	function dunkinDonutsCCPA() {
 		console.log("dunkinDonutsCCPAv2", userFillInfo);
+
+		function watchForSubmission() {
+			if ( document.getElementById("formSubmitSuccessModal").style.display !== "block" ){
+				setTimeout(()=>{
+					watchForSubmission();
+				}, 1000);
+			} else {
+				sendMessage("close-current-tab");
+			}
+		}
+
 		let input1 = document.getElementById("parent_1_option_1");
 		let input = document.getElementById("RIGHT_TO_OPT_OUT_OPTIONS_1");
 		let email = document.getElementById("emailInput");
@@ -46,7 +49,6 @@
 
 	}
 
-	// let supportedSites = null;
 	let supportedSites = null;
 
 	function setSupportedSitesArray(value) {
@@ -79,9 +81,105 @@
 		});
 	}
 
+	function facebookAIOptOut(site) {
+		console.log(site.href);
+
+		if (site.href !== "https://www.facebook.com/settings?tab=facerec") {
+			console.log("not-facebookAIOptOut");
+			return;
+		}
+
+		console.log("facebookAIOptOut");
+
+		function watchForSubmission() {
+			console.log("watchForSubmission");
+			let closeButtonWrapper = document.querySelector(".fbSettingsListItem .content");
+			let closeButton = closeButtonWrapper.querySelector("a");
+
+			if ( !closeButton ){
+				setTimeout(()=>{
+					watchForSubmission();
+				}, 1000);
+			} else {
+				closeButton.click();
+				sendMessage("close-current-tab");
+			}
+
+
+		}
+
+		function onboardingJourney() {
+			setTimeout(()=>{
+				let onboarding = document.querySelector("div[aria-labelledby='gdpr_panel_header_text']");
+				if (onboarding) {
+					let onboardingButton = onboarding.querySelector("button");
+					onboardingButton.click();
+				}
+			}, 500);
+
+			setTimeout(()=>{
+				let turnOffButtonWrapper = document.querySelector("div[data-testid='parent_deny_consent_button']");
+				console.log(turnOffButtonWrapper);
+				if (turnOffButtonWrapper) {
+					let turnOffButton = turnOffButtonWrapper.querySelector("button");
+					turnOffButton.click();
+				}
+			}, 1000);
+
+			setTimeout(()=>{
+				sendMessage("close-current-tab");
+			}, 500);
+		}
+
+		function defaultJourney() {
+			let editButton = document.querySelector(".fbSettingsListItemEditText");
+			setTimeout(()=>{
+				editButton.click();
+			}, 500);
+
+			setTimeout(()=>{
+				let fbSettingsListItem = document.querySelector(".fbSettingsListItem");
+				let uiPopover = fbSettingsListItem.querySelector(".uiPopover");
+				let dropdownButton = uiPopover.querySelector("a");
+				dropdownButton.click();
+			}, 750);
+
+			setTimeout(()=>{
+				let uiContextualLayerPositioner = document.querySelector(".uiContextualLayerPositioner");
+				let menu = uiContextualLayerPositioner.querySelector("ul");
+				menu.lastChild.click();
+			}, 750);
+
+			setTimeout(()=>{
+				watchForSubmission();
+			}, 750);
+
+			setTimeout(()=>{
+				// sendMessage("close-current-tab");
+			}, 500);
+
+		}
+
+		setTimeout(()=>{
+			let onboarding = document.querySelector("div[aria-labelledby='gdpr_panel_header_text']");
+
+			if (onboarding) {
+				onboardingJourney();
+			} else {
+				defaultJourney();
+			}
+
+		}, 500);
+
+
+	}
+
 	function runRecipe(site) {
 		console.log("runRecipe", site, userFillInfo);
-		switch (site.host) {
+		switch (site.hostname) {
+			case "www.facebook.com":
+				facebookAIOptOut(site);
+				break;
 			case "www.dunkindonuts.com":
 				dunkinDonutsCCPA();
 				break;

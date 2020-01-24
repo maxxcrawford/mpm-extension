@@ -53,7 +53,7 @@
 
     "content_scripts": [
         {
-            "matches": ["*://*.dunkindonuts.com/*"],
+            "matches": ["*://*.dunkindonuts.com/*", "*://*.facebook.com/*"],
             "js": ["content-script.js"],
             "css": ["content-script.css"],
             "all_frames": true
