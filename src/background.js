@@ -411,6 +411,16 @@
 		}
 	};
 
+	async function getCurrentThemeInfo() {
+		let themeInfo = await browser.theme.getCurrent();
+		themeInfo.then( res => {
+				console.log(res);
+			}
+		);
+		// getStyle(themeInfo);
+		// console.log(themeInfo);
+	}
+
 	browser.runtime.onMessage.addListener(messageCatcher);
 
 	// Fires syncUserInfo ONCE per browser start up
@@ -436,6 +446,7 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		updatePopupBubble();
 		syncUserInfo();
+		getCurrentThemeInfo();
 	});
 
 	browser.browserAction.setBadgeBackgroundColor({
@@ -447,11 +458,13 @@
 	});
 
 	function handleInstalled(details) {
-	  browser.tabs.create({
-	    url: "/options.html"
-	  });
+	  // browser.tabs.create({
+	  //   url: "/options.html"
+	  // });
 	}
 
 	browser.runtime.onInstalled.addListener(handleInstalled);
+
+
 
 }
