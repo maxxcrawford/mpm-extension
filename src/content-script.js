@@ -18,8 +18,9 @@
 			return;
 		}
 
-		addOverlay("In Progress");
-		let overlay = document.querySelector(".mpm-body-loader-bar");
+		overlay.create();
+		overlay.addText("In Progress");
+		// let overlay = document.querySelector(".mpm-body-loader-bar");
 
 		console.log("dunkinDonutsCCPA-init");
 
@@ -29,11 +30,15 @@
 					watchForSubmission();
 				}, 1000);
 			} else {
-				sendMessage({
-					message: "close-current-tab",
-					action: "doNotSell",
-					status: "pending"
-				});
+				overlay.updateProgressBar("100%");
+				overlay.updateText("Complete");
+				setTimeout(()=>{
+					sendMessage({
+						message: "close-current-tab",
+						action: "doNotSell",
+						status: "pending"
+					});
+				}, 1000)
 			}
 		}
 
@@ -44,21 +49,21 @@
 		setTimeout(()=>{
 			input1.click();
 			input.click();
-			overlay.style.width = "33%";
+			overlay.updateProgressBar("33%");
 		}, 500);
 		setTimeout(()=>{
 			email.focus();
 			email.select();
 			email.value = userFillInfo.email;
 			email.blur();
-			overlay.style.width = "66%";
+			overlay.updateProgressBar("66%");
 		}, 500);
 
 		const form = document.querySelector(".doNotSell__form");
 
 		setTimeout(()=>{
 			watchForSubmission();
-			overlay.style.width = "88%";
+			overlay.updateProgressBar("88%");
 			let submit = form.querySelector("input[type=submit]");
 			submit.click();
 		}, 500);
@@ -103,34 +108,57 @@
 		});
 	}
 
-	function addOverlay(message, url) {
-		console.log(message);
-		let overlay = document.createElement("div");
-		overlay.className = "mpm-body-overlay"
-		document.querySelector("html").insertAdjacentElement("afterbegin", overlay);
-
-		let loaderBar = document.createElement("div");
-		loaderBar.className = "mpm-body-loader-bar"
-		document.querySelector(".mpm-body-overlay").insertAdjacentElement("afterbegin", loaderBar);
-
-		if (message) {
+	const overlay = {
+		addText(message) {
 			let messageContainer = document.createElement("div");
 			messageContainer.className = "mpm-body-overlay-message";
 			messageContainer.innerText = message;
 			document.querySelector(".mpm-body-overlay").insertAdjacentElement(
 				"afterbegin", messageContainer
 			);
-
-			if (url) {
-				console.log(url.host);
-				let link = document.createElement("a");
-				link.className = "mpm-body-overlay-link";
-				link.href = url.origin;
-				link.innerText = url.host;
-				document.querySelector(".mpm-body-overlay-message").insertAdjacentElement(
-					"beforeend", link
-				);
+		},
+		addURL(url, title) {
+			if ( !document.querySelector(".mpm-body-overlay-message") ) {
+				throw new Error("No message set. Add message first.");
 			}
+			// console.log(url.host);
+			let link = document.createElement("a");
+			link.className = "mpm-body-overlay-link";
+			link.href = url.origin;
+
+			if (title) {
+				link.innerText = title
+			} else {
+				link.innerText = url.host;
+			}
+
+			document.querySelector(".mpm-body-overlay-message").insertAdjacentElement(
+				"beforeend", link
+			);
+		},
+		create() {
+			let overlay = document.createElement("div");
+			overlay.className = "mpm-body-overlay"
+			document.querySelector("html").insertAdjacentElement("afterbegin", overlay);
+
+			let loaderBar = document.createElement("div");
+			loaderBar.className = "mpm-body-loader-bar"
+			document.querySelector(".mpm-body-overlay").insertAdjacentElement("afterbegin", loaderBar);
+		},
+		updateProgressBar(percent){
+			if (!percent) {
+				throw new Error("No percent set!");
+			}
+			let loaderBar = document.querySelector(".mpm-body-loader-bar")
+			console.log(loaderBar, percent);
+			loaderBar.style.width = percent;
+		},
+		updateText(message) {
+			console.log("updateText");
+			if (!document.querySelector(".mpm-body-overlay-message")){
+				throw new Error("No message available to update");
+			}
+			document.querySelector(".mpm-body-overlay-message").innerText = message;
 		}
 	}
 
@@ -143,13 +171,17 @@
 		}
 
 		if ( document.querySelector("h1").textContent.includes("Sorry") ) {
-			addOverlay("Not logged in!", window.location);
+			overlay.create();
+			overlay.addText("Not logged in!");
+			overlay.addURL("window.location")
 			return;
 		}
 
-		addOverlay("In Progress");
-		let overlay = document.querySelector(".mpm-body-loader-bar");
-		console.log(overlay);
+		overlay.create();
+		overlay.addText("In Progress");
+
+		// let overlay = document.querySelector(".mpm-body-loader-bar");
+		// console.log(overlay);
 
 		console.log("facebookAIOptOut");
 
@@ -164,12 +196,16 @@
 				}, 1000);
 			} else {
 				closeButton.click();
-				overlay.style.width = "100%";
-				sendMessage({
-					message: "close-current-tab",
-					action: "facialRecognition",
-					status: "pending"
-				});
+				overlay.updateProgressBar("100%");
+				overlay.updateText("Completed");
+
+				setTimeout( () => {
+					sendMessage({
+						message: "close-current-tab",
+						action: "facialRecognition",
+						status: "pending"
+					});
+				}, 1000);
 			}
 
 
@@ -181,7 +217,7 @@
 				if (onboarding) {
 					let onboardingButton = onboarding.querySelector("button");
 					onboardingButton.click();
-					overlay.style.width = "33%";
+					overlay.updateProgressBar("33%");
 				}
 			}, 750);
 
@@ -191,12 +227,12 @@
 				if (turnOffButtonWrapper) {
 					let turnOffButton = turnOffButtonWrapper.querySelector("button");
 					turnOffButton.click();
-					overlay.style.width = "66%";
+					overlay.updateProgressBar("66%");
 				}
 			}, 750);
 
 			setTimeout(()=>{
-				overlay.style.width = "100%";
+				overlay.updateProgressBar("100%");
 				sendMessage({ message:"close-current-tab" });
 			}, 750);
 		}
@@ -204,7 +240,7 @@
 		function defaultJourney() {
 			let editButton = document.querySelector(".fbSettingsListItemEditText");
 			setTimeout(()=>{
-				overlay.style.width = "20%";
+				overlay.updateProgressBar("20%");
 				editButton.click();
 			}, 750);
 
@@ -213,18 +249,18 @@
 				let uiPopover = fbSettingsListItem.querySelector(".uiPopover");
 				let dropdownButton = uiPopover.querySelector("a");
 				dropdownButton.click();
-				overlay.style.width = "40%";
+				overlay.updateProgressBar("40%");
 			}, 750);
 
 			setTimeout(()=>{
 				let uiContextualLayerPositioner = document.querySelector(".uiContextualLayerPositioner");
 				let menu = uiContextualLayerPositioner.querySelector("ul");
 				menu.lastChild.click();
-				overlay.style.width = "60%";
+				overlay.updateProgressBar("60%");
 			}, 750);
 
 			setTimeout(()=>{
-				overlay.style.width = "80%";
+				overlay.updateProgressBar("80%");
 				watchForSubmission();
 			}, 750);
 
