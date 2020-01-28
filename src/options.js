@@ -172,7 +172,11 @@ console.log("options.js");
           actionCard.className = "action-card";
 
           let actionCardTitle = document.createElement("h3");
-          actionCardTitle.innerText = siteName;
+          let actionCardTitleLink = document.createElement("a");
+          actionCardTitleLink.href = "https://" + siteName;
+          actionCardTitleLink.innerText = siteName;
+          // actionCardTitleLink.setAttribute("target", "_blank");
+          actionCardTitle.insertAdjacentElement("beforeend", actionCardTitleLink);
           actionCard.insertAdjacentElement("beforeend", actionCardTitle);
 
           Object.entries(siteInfo).forEach( action => {
@@ -208,6 +212,11 @@ console.log("options.js");
     setPanelActionButtonListeners();
   }
 
+  function refreshOptionsPage() {
+    console.log("refreshOptionsPage");
+    window.location.reload(true);
+  }
+
   function parseMessage(value){
     // console.log("parseMessagevalue", value);
     switch (value.message) {
@@ -216,6 +225,9 @@ console.log("options.js");
         break;
       case "send-all-actions":
         buildCards(value);
+        break;
+      case "extension-data-reset":
+        refreshOptionsPage();
         break;
     }
   }

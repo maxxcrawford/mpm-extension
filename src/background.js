@@ -117,6 +117,14 @@
 	}
 
 
+	async function resetExtensionData() {
+		await browser.storage.local.clear();
+		let storage = await browser.storage.local.get();
+		syncCheck = false;
+		syncUserInfo();
+		// console.log("resetExtensionData", storage );
+	}
+
 	function getNoActionsCards(data){
 		let noActionCards = [];
 		data.forEach( item => {
@@ -486,6 +494,11 @@
 					message: "send-all-actions",
 					statuses: data.mpmSyncData.urlStatuses,
 					actions: supportedSitesWithActions.sites
+				});
+			case "reset-extension-data":
+				await resetExtensionData();
+				return Promise.resolve({
+					message: "extension-data-reset",
 				});
 		}
 	}
