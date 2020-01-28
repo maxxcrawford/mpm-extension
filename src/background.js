@@ -45,11 +45,11 @@
 					dataRequest: "https://www.dunkindonuts.com/en/consumer-rights",
 					deleteRequest: "https://www.dunkindonuts.com/en/consumer-rights"
 				},
-				actions: [
+				actions: {
 					ccpaDoNotSell,
 					ccpaDataRequest,
 					ccpaDeleteRequest
-				]
+				}
 			},
 			{
 				site: "www.facebook.com",
@@ -58,20 +58,43 @@
 					deleteRequest: "https://www.facebook.com/help/contact/784491318687824",
 					facialRecognition: "https://www.facebook.com/settings?tab=facerec"
 				},
-				actions: [
+				actions: {
 					ccpaDataRequest,
 					ccpaDeleteRequest,
-					{
+					facialRecognition: {
 						title: "Disable Facial Recognition",
 						icon: "/images/delete-16.svg",
 						description: "Stop Facebook from using facial recognition technology to identify you in photos and videos.",
 						cta: "Disable",
 						action: "facialRecognition"
 					}
-				]
+				}
 			}
 		]
 	};
+
+	async function getPendingItems() {
+		let data = await extensionData.get();
+		console.log("getPendingItems", data.mpmSyncData.urlStatuses );
+
+		let sites = Object.keys(data.mpmSyncData.urlStatuses);
+		let pendingData = {};
+
+		for (let site of sites) {
+			// TODO: Can only get one pending item per site currently.
+			let pendingItems = getActionItems(data, site, "pending");
+			if (pendingItems) {
+				pendingData[site] = pendingItems;
+			}
+		}
+
+		// Check if pendingData object is empty
+		if (Object.entries(pendingData).length === 0 && pendingData.constructor === Object) {
+			return false;
+		}
+
+		return pendingData;
+	}
 
 	function getActionCards(url){
 		for (let site of supportedSitesWithActions.sites) {
@@ -80,6 +103,7 @@
 			}
 		}
 	}
+
 
 	function getNoActionsCards(data){
 		let noActionCards = [];
@@ -93,19 +117,57 @@
 
 	function getActionsCount(data, string){
 		let statusList = data.map(action => action.status);
-		let noActionOnly = statusList.filter(str => { return str.includes(string) });
-		return noActionOnly.length;
+		let getOnlyStringItems = statusList.filter(str => { return str.includes(string) });
+		return getOnlyStringItems.length;
 	}
 
-	async function countActionCards(url, string){
-		// TODO: Update count to use mpmSyncData dataset instead
-		let data = await browser.storage.local.get("mpmSyncData");
-		for (let site of data.mpmSyncData.urlStatuses) {
-			if ( site.site ===  url ) {
-				return getActionsCount(site.actions, string);
-			}
+	function getActionItems(data, url, string){
+		// let statusList = data.map(action => action.status);
+		let statusArrayValues =  Object.values(data.mpmSyncData.urlStatuses[url]);
+		let statusArrayKeys =  Object.keys(data.mpmSyncData.urlStatuses[url]);
+		let index = statusArrayValues.indexOf(string);
+		console.log("getActionItems", index);
+		if (index < 0) { return false; }
+		return statusArrayKeys[index];
+	}
+
+	async function countSiteActionCards(url, string){
+		let data = await extensionData.get();
+		let supportedSites = Object.keys(data.mpmSyncData.urlStatuses);
+
+		if (supportedSites.includes(url)) {
+			let statusArray =  Object.values(data.mpmSyncData.urlStatuses[url]);
+			let noActionCount = statusArray.filter( status => status == string).length;
+			return noActionCount;
+		} else {
+			return null;
 		}
 	}
+
+	async function countAllActionCards(string){
+		console.log("countAllActionCards");
+		let data = await extensionData.get();
+		let supportedSites = Object.keys(data.mpmSyncData.urlStatuses);
+
+		let count = 0;
+
+		for (let site of supportedSites) {
+			let statusArray =  Object.values(data.mpmSyncData.urlStatuses[site]);
+			let noActionCount = statusArray.filter( status => status == string).length;
+			count = count + noActionCount;
+		}
+
+		return count;
+	}
+
+		// // if (supportedSites.includes(url)) {
+		// let statusArray =  Object.values(data.mpmSyncData.urlStatuses[url]);
+		// let noActionCount = statusArray.filter( status => status == string).length;
+		// return noActionCount;
+		// } else {
+		// 	return null;
+		// }
+	// }
 
 	// async function getActionCards(url){
 	// 	console.log("gatherActionCards");
@@ -136,10 +198,6 @@
 
 	let userInfo = null;
 
-	// If the shape of this data changes, bump this version number and creat a
-	// migration function that references it
-	const LATEST_DATA_VERSION = 0.1;
-
 	function saveUserInfo(formInfo) {
 		browser.storage.local.set({
 			formInfo
@@ -148,93 +206,90 @@
 
 
 	/**
-	 * buildActionsArray - Loops through list of actions for an unsynced site and creates a new object with a status "no action"
+	 * buildActionsObject - Loops through list of actions for an unsynced site and creates a new object with a status "no action"
 	 *
 	 * @param  {type} data array of site actions from the supportedSitesWithActions object.
 	 * @return {type}      array
 	 */
-	function buildActionsArray(data) {
+	function buildActionsObject(data) {
 		let actionList = Object.keys(data);
-
-		let array = [];
+		let object = {};
 
 		for (let action of actionList) {
-			array.push({
-				action,
-				status: "no action"
-			})
+			object[action] = "no action"
 		};
 
-		return array;
+		return object;
 	}
 
+	// If the shape of this data changes, bump this version number and creat a
+	// migration function that references it
+	const LATEST_DATA_VERSION = 0.1;
+
 	const extensionData = {
-		init() {
+		async init() {
+			console.log("extensionData init");
 			let data = {
 				mpmSyncData: {
 					version: LATEST_DATA_VERSION,
-					urlStatuses: [],
+					urlStatuses: {}
 				}
 			};
 			for (let site of supportedSitesWithActions.sites) {
-				let actionArr = buildActionsArray(site.urls);
-				data.mpmSyncData.urlStatuses.push({
-					site: site.site,
-					actions: actionArr
-				});
+				// console.log(site);
+				// console.log("site.urls: ", site.urls);
+				let actionArr = buildActionsObject(site.urls);
+				console.log(typeof actionArr);
+				data.mpmSyncData.urlStatuses[site.site] = actionArr;
+				console.log( typeof data.mpmSyncData.urlStatuses[site.site] );
+				// console.log( data.mpmSyncData.urlStatuses[site.site] );
+				// data.mpmSyncData.urlStatuses[site.site] = actionArr;
 			}
-			this.set(data);
+
+			console.log("init: ", data);
+			await this.set(data);
 		},
 		async get() {
+			console.log("get");
 			let data = await browser.storage.local.get("mpmSyncData");
 			return data;
 		},
 		migrate(res) {
 			if (res.mpmSyncData.version == LATEST_DATA_VERSION) {
+				console.log("migration not needed");
 				return;
 			}
 
-			let userSitesObject = res;
-			let userSitesList = [];
-			for (let site of userSitesObject.mpmSyncData.urlStatuses) {
-				userSitesList.push(site.site);
-			}
+			console.log("migration needed", res);
+
+			// let userSitesObject = res;
+			// let userSites = Object.keys(userSitesObject.mpmSyncData.urlStatuses);
+			//
+			// console.log( userSites );
 
 			// TODO: Add logic for when a site is REMOVED from the supportedSites array
-			for (let site of supportedSitesWithActions.sites) {
-				if ( !userSitesList.includes(site.site) ) {
-					let actionsArray = buildActionsArray(site.urls);
-					userSitesObject.mpmSyncData.urlStatuses.push({
-						site: site.site,
-						actions: actionsArray
-					});
-				}
-			}
-			userSitesObject.mpmSyncData.version = LATEST_DATA_VERSION;
-			this.set(userSitesObject);
+			// for (let site of supportedSitesWithActions.sites) {
+			// 	if ( !userSites.includes(site.site) ) {
+			// 		console.log(site.site);
+			// 		let actionArr = buildActionsObject(site.urls);
+			// 		console.log( res.mpmSyncData.urlStatuses[site.site] );
+			// 		userSitesObject.mpmSyncData.urlStatuses[site.site] = actionArr;
+			// 	}
+			// }
+			// userSitesObject.mpmSyncData.version = LATEST_DATA_VERSION;
+			// console.log("migrated", userSitesObject);
+			// this.set(userSitesObject);
 		},
-		set(data) {
-			console.log("data", data);
-			browser.storage.local.set(data);
-			// browser.storage.sync.set(data);
+		async set(data) {
+			await browser.storage.local.set(data);
+			let check = await this.get();
 		},
 		async update(data) {
 			let syncData = await this.get();
 			let url = new URL(data.source);
 			url = url.hostname;
 
-			let site = syncData.mpmSyncData.urlStatuses.filter(
-				item => {
-					return item.site === url;
-				}
-			)
-
-			let actions = site[0].actions.filter(
-				item => {
-					return item.action === data.action;
-				}
-			)
-			actions[0]["status"] = data.status;
+			syncData.mpmSyncData.urlStatuses[url][data.action] =  data.status;
 
 			this.set(syncData);
 		},
@@ -343,8 +398,9 @@
 					response: staticSupportedSites
 				});
 			case "get-pending-actions-count":
-				let actionCount = 1;
-				// let actionCount = await countActionCards(currentTabURL.hostname, "no action");
+				console.log("get-pending-actions-count", sender);
+				let actionCount = await countAllActionCards("pending");
+				console.log("countAllActionCards: ", actionCount);
 				return Promise.resolve({
 					message: "send-pending-actions-count",
 					response: actionCount
@@ -376,11 +432,19 @@
 				});
 			case "request-action-cards":
 				console.log(request.site);
+				let statusData = await extensionData.get();
+				statusData = statusData.mpmSyncData.urlStatuses[request.site];
 				let actionCards = await getActionCards(request.site);
-				// let actionCards = getActionCards(request.site);
 				return Promise.resolve({
 					message: "send-action-cards-assets",
-					actions: actionCards
+					actions: actionCards,
+					status: statusData
+				});
+			case "get-pending-confirmations":
+				let pendingList = await getPendingItems();
+				return Promise.resolve({
+					message: "send-pending-confirmations",
+					response: pendingList
 				});
 		}
 	}
@@ -402,7 +466,8 @@
 		let currentTabURL = new URL(currentTab[0].url);
 		let siteRecommendations = await checkForRecommendations();
 		if ( siteRecommendations.recommendations ) {
-			let actionCount = await countActionCards(currentTabURL.hostname, "no action");
+			console.log("siteRecommendations.recommendations");
+			let actionCount = await countSiteActionCards(currentTabURL.hostname, "no action");
 			actionCount = actionCount.toString();
 			browser.browserAction.setBadgeText({
 				text: actionCount,
@@ -411,26 +476,19 @@
 		}
 	};
 
-	async function getCurrentThemeInfo() {
-		let themeInfo = await browser.theme.getCurrent();
-		themeInfo.then( res => {
-				console.log(res);
-			}
-		);
-		// getStyle(themeInfo);
-		// console.log(themeInfo);
-	}
-
 	browser.runtime.onMessage.addListener(messageCatcher);
 
 	// Fires syncUserInfo ONCE per browser start up
 	browser.storage.onChanged.addListener(logStorageChange);
 
-	browser.browserAction.onClicked.addListener((tab) => {
+	browser.browserAction.onClicked.addListener( async (tab) => {
 	  // requires the "tabs" or "activeTab" permission
 		let panelURL = browser.runtime.getURL("/panel.html");
 		browser.browserAction.setPopup({popup: panelURL});
 		browser.browserAction.openPopup();
+
+		let localData = await extensionData.get();
+		console.log(localData);
 	});
 
 	browser.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
@@ -446,7 +504,7 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		updatePopupBubble();
 		syncUserInfo();
-		getCurrentThemeInfo();
+
 	});
 
 	browser.browserAction.setBadgeBackgroundColor({
@@ -458,9 +516,9 @@
 	});
 
 	function handleInstalled(details) {
-	  browser.tabs.create({
-	    url: "/options.html"
-	  });
+	  // browser.tabs.create({
+	  //   url: "/options.html"
+	  // });
 	}
 
 	browser.runtime.onInstalled.addListener(handleInstalled);

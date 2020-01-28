@@ -47,26 +47,97 @@ function getActiveCards(data) {
   });
 }
 
-function buildCards(actions) {
-  console.log(actions);
-  let actionsData = actions.actions;
-  let actionsURLs = actions.urls;
+function getPendingItems(data){
+  let pendingItems = Object.entries(data);
+  console.log("pendingItems", pendingItems);
+
+  let confirmationsList = document.querySelector("#confirmationsList");
+
+  function decodeSiteAction(action){
+    console.log(action);
+    let string;
+    switch (action) {
+      case "doNotSell":
+        string = "do not sell"
+        break;
+      case "facialRecognition":
+        string = "disable facial recognition"
+        break;
+      default:
+        return false;
+    }
+
+    return string;
+  }
+
+  pendingItems.forEach( (item, i) => {
+    let idName = "site" + i;
+    let siteName = item[0];
+    siteName = siteName.replace("www.", "");
+    // siteName = siteName.toUpperCase()
+    let siteAction = item[1];
+    siteAction = decodeSiteAction(siteAction);
+
+    let pendingItemHTML = document.createElement("div")
+    pendingItemHTML.className = "site";
+
+    let pendingItemLabel = document.createElement("label");
+    pendingItemLabel.className = "site-name";
+    pendingItemLabel.htmlFor = idName;
+    pendingItemHTML.insertAdjacentElement("beforeend", pendingItemLabel);
+
+    let pendingItemSpan = document.createElement("span");
+    pendingItemSpan.innerText = siteName;
+    pendingItemLabel.insertAdjacentElement("beforeend", pendingItemSpan);
+
+    if (siteAction) {
+      let pendingItemSpan2 = document.createElement("span");
+      pendingItemSpan2.innerText = siteAction;
+      pendingItemSpan.insertAdjacentElement("beforeend", pendingItemSpan2);
+    }
+
+    let pendingItemInput = document.createElement("input");
+    pendingItemInput.setAttribute("type", "checkbox");
+    pendingItemInput.id = siteName;
+    pendingItemHTML.insertAdjacentElement("beforeend", pendingItemInput);
+
+    confirmationsList.insertAdjacentElement("beforeend", pendingItemHTML)
+
+  });
+
+  confirmationsListenerInit();
+
+}
+
+function buildCards(data) {
+  console.log(data);
+  let actionsData = Object.entries(data.actions.actions);
+  let actionsURLs = data.actions.urls;
+  let status = data.status;
 
   let actionsContainer = document.querySelector(".card-site-not-empty");
 
+  console.log(status);
+
+
   actionsData.forEach( item => {
+    let actionData = item[1];
+
     let card = document.createElement("div");
     card.className = "card";
-    if (item.warning) { card.classList.add("warning") }
+    if (actionData.warning) { card.classList.add("warning") }
+
+    let actionStatus = status[actionData.action];
+    console.log(actionStatus);
 
     // Build Title
     let cardTitle = document.createElement("div");
     cardTitle.className = "card-title";
     let cardTitleIcon = document.createElement("img");
     cardTitleIcon.className = "svg";
-    cardTitleIcon.src = item.icon;
+    cardTitleIcon.src = actionData.icon;
     let cardTitleText = document.createElement("span");
-    cardTitleText.innerText = item.title;
+    cardTitleText.innerText = actionData.title;
     cardTitle.insertAdjacentElement("beforeend", cardTitleIcon);
     cardTitle.insertAdjacentElement("beforeend", cardTitleText);
     card.insertAdjacentElement("beforeend", cardTitle);
@@ -74,23 +145,29 @@ function buildCards(actions) {
     // Build Description
     let cardDescription = document.createElement("div");
     cardDescription.className = "card-description";
-    cardDescription.innerText = item.description;
+    cardDescription.innerText = actionData.description;
     card.insertAdjacentElement("beforeend", cardDescription);
 
     // Build Action
     let cardAction = document.createElement("div");
     cardAction.className = "card-action";
-    cardAction.classList.add("button");
-    cardAction.innerText = item.cta;
-    cardAction.dataset.action = item.action
-    cardAction.dataset.url = actionsURLs[item.action]
+
+    if ( actionStatus === "pending" ) {
+      cardAction.innerText = "Pending";
+      card.classList.add("pending", "js-pending");
+    } else {
+      cardAction.classList.add("button", "js-card-action");
+      cardAction.innerText = actionData.cta;
+      cardAction.dataset.action = actionData.action
+      cardAction.dataset.url = actionsURLs[actionData.action]
+    }
 
     card.insertAdjacentElement("beforeend", cardAction);
 
     actionsContainer.insertAdjacentElement("beforeend", card);
   });
 
-  let cardActions = document.querySelectorAll(".card-action");
+  let cardActions = document.querySelectorAll(".js-card-action");
   for (let action of cardActions) {
     action.addEventListener('click', () => {
       sendMessage({
@@ -101,10 +178,35 @@ function buildCards(actions) {
     });
   }
 
+  let pendingActionButtons = document.querySelectorAll(".js-pending");
+  pendingActionButtons.forEach( button => {
+    button.addEventListener("click", () => {
+      changePanel("confirmations");
+    });
+  });
+
+  let pendingAction = document.querySelectorAll(".js-pending");
+  for (let action of cardActions) {
+    action.addEventListener('click', () => {
+      sendMessage({
+        message: "panel-site-action",
+        action: action.dataset.action,
+        url: action.dataset.url
+      })
+    });
+  }
 }
 
 function updatePendingActionsCount(count) {
   document.querySelector("#pendingActionsCount").innerText = count;
+
+  if (count > 0) {
+    let buttonConfirmations = document.querySelector(".button-confirmations");
+    buttonConfirmations.addEventListener('click', () => {
+      // console.log(backButton);
+      changePanel("confirmations");
+    });
+  }
 }
 
 function parseMessage(value){
@@ -118,15 +220,17 @@ function parseMessage(value){
       updateAutofill(value);
       break;
     case "send-active-cards":
-      console.log("caught");
       getActiveCards(value.actions);
       break;
     case "send-action-cards-assets":
-      console.log("caught");
-      buildCards(value.actions);
+      buildCards(value);
       break;
     case "send-pending-actions-count":
-      updatePendingActionsCount(value.response)
+      updatePendingActionsCount(value.response);
+      break;
+    case "send-pending-confirmations":
+      getPendingItems(value.response)
+      break;
   }
 }
 
@@ -154,6 +258,7 @@ function changePanel(panel) {
     case "confirmations":
       homeBody.style.display = "none";
       confirmationsBody.style.display = "block";
+      sendMessage({message: "get-pending-confirmations"});
       break;
     default:
       console.error(`No panel found for #${panel}`);
@@ -164,20 +269,23 @@ function changePanel(panel) {
 
 function confirmationsListenerInit(){
 
-  let buttonConfirmations = document.querySelector(".button-confirmations");
-  buttonConfirmations.addEventListener('click', () => {
-    // console.log(backButton);
-    changePanel("confirmations");
-  });
-
   let confirmationsForm = document.querySelector("#confirmationsList");
   let checkBoxes = confirmationsForm.querySelectorAll("input[type='checkbox']")
   // console.log("confirmationsListenerInit", confirmationsForm);
 
   let selectAllButton = document.querySelector(".confirmation-button");
   selectAllButton.addEventListener('click', () => {
-    checkBoxes.forEach( checkbox => checkbox.checked = true);
+    console.log("selectAllButton");
+    checkBoxes.forEach( checkbox => checkbox.checked = !checkbox.checked);
   });
+
+  let viewCompletedButton = document.querySelector(".view-completed-button");
+  viewCompletedButton.addEventListener('click', () => {
+    console.log("view-completed-button");
+    // checkBoxes.forEach( checkbox => checkbox.checked = true);
+  });
+
+
 
   let backButton = document.querySelector(".back-button");
   backButton.addEventListener('click', () => {
@@ -195,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
   sendMessage({message: "check-for-site-recommendations"});
   sendMessage({message: "get-ccpa-info"});
 
-  confirmationsListenerInit();
+
 
   let buttonsURLs = document.querySelectorAll(".button-url");
   for (let button of buttonsURLs) {
@@ -207,8 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.close();
     });
   }
-
-
 
   let buttonConfirmationsPanel = document.querySelector(".button-confirmations");
   buttonConfirmationsPanel.addEventListener('click', () => {

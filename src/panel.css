@@ -3,6 +3,7 @@ body {
   --black: #222123;
   --dark-gray: #32313C;
   --gray: #494851;
+  --medium-gray: #666666;
   --light-gray: #737373;
   --warning-black: #1E1D23;
   --purple: #AD3BFF;
@@ -218,6 +219,14 @@ section.cards {
   cursor: pointer;
 }
 
+.pending .card-action {
+  background: var(--light-gray);
+}
+
+.pending .card-action:hover {
+  background: var(--medium-gray);
+}
+
 .card-action:hover {
   background: var(--dark-purple);
 }
@@ -307,7 +316,21 @@ section.cards {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.site label > span {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.site label span > span {
+  width: 100%;
+  font-style: italic;
+  text-transform: normal;
+  color: var(--light-gray);
 }
 
 .title .back-button {

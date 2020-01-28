@@ -20,6 +20,7 @@
 
 		overlay.create();
 		overlay.addText("In Progress");
+		
 		// let overlay = document.querySelector(".mpm-body-loader-bar");
 
 		console.log("dunkinDonutsCCPA-init");
