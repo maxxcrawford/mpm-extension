@@ -58,8 +58,6 @@ function getPendingItems(data){
 
   let confirmationsList = document.querySelector("#confirmationsList");
 
-  confirmationsList.innerHTML = "";
-
   function decodeSiteAction(action){
     let string;
     switch (action) {
@@ -292,8 +290,11 @@ function confirmationsListenerInit(){
 
   let viewCompletedButton = document.querySelector(".view-completed-button");
   viewCompletedButton.addEventListener('click', () => {
-    // console.log("view-completed-button");
-    // checkBoxes.forEach( checkbox => checkbox.checked = true);
+      browser.tabs.create({
+        url: viewCompletedButton.dataset.url,
+        active: true
+      });
+      window.close();
   });
 
   let backButton = document.querySelector(".back-button");

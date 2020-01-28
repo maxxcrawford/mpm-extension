@@ -12,7 +12,7 @@
 	];
 
 	// Generic descriptions for CCPA
-	const ccpaDoNotSell = {
+	const doNotSell = {
 		title: "Do Not Sell",
 		icon: "/images/donotsell-16.svg",
 		description: "As a California resident you have the right to ask this website to not sell your personal information and activity.",
@@ -20,7 +20,7 @@
 		action: "doNotSell"
 	};
 
-	const ccpaDataRequest = {
+	const dataRequest = {
 		title: "Download Personal Data",
 		icon: "/images/download-16.svg",
 		description: "You can request all the data this website has about out. Click Request Data to receive a copy.",
@@ -28,7 +28,7 @@
 		action: "dataRequest"
 	};
 
-	const ccpaDeleteRequest = {
+	const deleteRequest = {
 		title: "Delete Personal Data",
 		icon: "/images/delete-16.svg",
 		description: "Delete the personal this site keep about you.",
@@ -47,9 +47,9 @@
 					deleteRequest: "https://www.dunkindonuts.com/en/consumer-rights"
 				},
 				actions: {
-					ccpaDoNotSell,
-					ccpaDataRequest,
-					ccpaDeleteRequest
+					doNotSell,
+					dataRequest,
+					deleteRequest
 				}
 			},
 			{
@@ -59,8 +59,8 @@
 					deleteRequest: "https://privacyportal-cdn.onetrust.com/dsarwebform/f9975fc5-c93f-4ff8-8169-846d8f6cd4d2/dd7e8c8f-839f-4be3-9ebc-060786941e92.html"
 				},
 				actions: {
-					ccpaDataRequest,
-					ccpaDeleteRequest
+					dataRequest,
+					deleteRequest
 				}
 			},
 			{
@@ -71,8 +71,8 @@
 					facialRecognition: "https://www.facebook.com/settings?tab=facerec"
 				},
 				actions: {
-					// ccpaDataRequest,
-					// ccpaDeleteRequest,
+					// dataRequest,
+					// deleteRequest,
 					facialRecognition: {
 						title: "Disable Facial Recognition",
 						icon: "/images/preferences-16.svg",

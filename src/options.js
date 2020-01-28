@@ -81,13 +81,19 @@ console.log("options.js");
 
   function buildCards(data) {
 
-    console.log("buildCards", data);
-
     let actionData = data.actions;
     let actionStatuses = data.statuses;
     let statusLoop = ["no action", "pending", "completed"];
 
     let cardWrapper = document.querySelector("#actions");
+
+    cardWrapper.innerHTML = "";
+
+    let cardWrapperTitle = document.createElement("h1");
+    cardWrapperTitle.innerText = "Recommendations";
+
+    cardWrapper.insertAdjacentElement("beforeend", cardWrapperTitle);
+
 
     function createActionSectionHeader(action){
 
@@ -111,15 +117,51 @@ console.log("options.js");
 
     }
 
+    function getActionCardLinkItem(type, site, action){
+      // console.log("getActionCardLinkItem");
+      // console.log(actionData);
+      let actionInfoArray = [];
+      actionData.forEach( item => {
+        // console.log(item);
+        // console.log(item.site, site);
+        if ( item.site == site ) {
+          // console.log(item.site, site);
+          Object.entries(item[type]).forEach( entry => {
+            switch (type) {
+              case "urls":
+                if ( entry[0] === action ) {
+                  let link = entry[1];
+                  // console.log(link);
+                  actionInfoArray.push(link);
+                }
+                break;
+              case "actions":
+                if ( entry[0] === action ) {
+                  actionInfoArray.push(entry[1].title);
+                }
+                break;
+              default:
+                throw new Error("Data type unknown");
+            }
+
+          });
+        }
+      });
+      if ( actionInfoArray === [] ) {
+        return false;
+      }
+      return actionInfoArray;
+
+    }
+
     for (let status of statusLoop) {
       // console.log(status);
       for (let site of Object.entries(actionStatuses)) {
         let siteName = site[0];
         let siteInfo = site[1];
-        // console.log(siteInfo);
-        // console.log( Object.values(siteInfo) );
 
         if ( Object.values(siteInfo).includes(status) ) {
+
           createActionSectionHeader(status);
 
           let actionSection = document.querySelector(
@@ -133,59 +175,37 @@ console.log("options.js");
           actionCardTitle.innerText = siteName;
           actionCard.insertAdjacentElement("beforeend", actionCardTitle);
 
+          Object.entries(siteInfo).forEach( action => {
+            // console.log(action);
 
-          Object.keys(siteInfo).forEach( action => {
+            if ( action[1] !== status ) {
+              return;
+            }
 
+            let actionCardLinkURL = getActionCardLinkItem("urls", siteName, action[0]);
+            let actionCardLinkText = getActionCardLinkItem("actions", siteName, action[0]);
             let actionCardLink = document.createElement("a");
             actionCardLink.className = "action-button";
             actionCardLink.classList.add("button");
-            actionCardLink.dataset.url = "";
+            if (actionCardLinkURL) {
+              actionCardLink.dataset.url = actionCardLinkURL
+            }
             // actionCardTitle title
-            actionCardLink.innerText = action;
-
+            actionCardLink.innerText = actionCardLinkText;
 
             actionCard.insertAdjacentElement("beforeend", actionCardLink);
 
           });
 
-
-
-
           actionSection.insertAdjacentElement("beforeend", actionCard);
 
-
-          // <div class="action-card">
-          //   <h3>facebook</h3>
-          //   <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">request data</a>
-          //   <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">delete</a>
-          //   <a class="action-button button" data-url="https://www.facebook.com/settings?tab=facerec">disable facial recognition</a>
-          // </div>
-
-          console.log(site);
-        } else {
-          console.log("none");
         }
 
 
       }
     }
 
-
-
-
-
-
-
-
-
-    // <section class="action-section">
-    //   <h2>No Action</h2>
-    //   <div class="action-card">
-    //     <h3>facebook</h3>
-    //     <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">request data</a>
-    //     <a class="action-button button" data-url="https://www.facebook.com/help/contact/784491318687824">delete</a>
-    //     <a class="action-button button" data-url="https://www.facebook.com/settings?tab=facerec">disable facial recognition</a>
-    //   </div>
+    setPanelActionButtonListeners();
   }
 
   function parseMessage(value){
@@ -197,6 +217,18 @@ console.log("options.js");
       case "send-all-actions":
         buildCards(value);
         break;
+    }
+  }
+
+  function setPanelActionButtonListeners() {
+    let buttons = document.querySelectorAll(".action-button");
+    for (let button of buttons) {
+      button.addEventListener('click', () => {
+        browser.tabs.create({
+          url: button.dataset.url,
+          active: true
+        });
+      });
     }
   }
 
@@ -212,20 +244,19 @@ console.log("options.js");
     });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // console.log("DOMContentLoaded");
+  function optionsInit(){
     getUserInfo();
     sendMessage({message: "get-all-actions"})
-    let buttons = document.querySelectorAll(".action-button");
-    for (let button of buttons) {
-      button.addEventListener('click', () => {
-        browser.tabs.create({
-          url: button.dataset.url,
-          active: true
-        });
+    let resetButton = document.querySelector(".js-reset");
+    resetButton.addEventListener('click', () => {
+      sendMessage({
+        message: "reset-extension-data"
       });
-    }
+    });
+  }
 
+  document.addEventListener('DOMContentLoaded', () => {
+    optionsInit();
   });
 
 }

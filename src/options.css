@@ -218,3 +218,11 @@ p {
   padding: 1.5rem 2rem 1rem;
   margin-bottom: 1rem;
 }
+
+.reset {
+  background: var(--light-gray);
+  opacity: 0.1;
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+}
