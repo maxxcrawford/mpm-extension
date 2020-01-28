@@ -63,7 +63,9 @@ section {
 	border-radius: 1rem 2rem 1rem 2rem;
   padding: 2rem;
   margin-bottom: 3rem;
+  position: relative;
 }
+
 
 h1, h2, h3, p {
   color: var(--white);
@@ -234,4 +236,14 @@ p {
   position: absolute;
   left: 1rem;
   top: 1rem;
+}
+
+.fill-form {
+  background: var(--light-gray);
+  opacity: 0.1;
+  position: absolute;
+  right: 0.5rem;
+  top: 1rem;
+  padding-left: 0;
+  padding-right: 0;
 }

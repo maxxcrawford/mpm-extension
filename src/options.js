@@ -265,6 +265,25 @@ console.log("options.js");
         message: "reset-extension-data"
       });
     });
+
+
+    let autofillButton = document.querySelector(".fill-form");
+    let autofillInfo = {
+      profileName: document.getElementById("userInfoProfile"),
+      firstName: document.getElementById("userInfoFirstName"),
+      lastName: document.getElementById("userInfoLastName"),
+      email: document.getElementById("userInfoEmail")
+    }
+
+    autofillButton.addEventListener('click', () => {
+      autofillInfo.profileName.value = "Work";
+      autofillInfo.firstName.value = "Fox";
+      autofillInfo.lastName.value = "McCloud";
+      autofillInfo.email.value = "fox@starfox.com";
+    });
+
+
+
   }
 
   document.addEventListener('DOMContentLoaded', () => {
