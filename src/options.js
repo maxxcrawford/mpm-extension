@@ -266,7 +266,6 @@ console.log("options.js");
       });
     });
 
-
     let autofillButton = document.querySelector(".fill-form");
     let autofillInfo = {
       profileName: document.getElementById("userInfoProfile"),

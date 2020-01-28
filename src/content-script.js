@@ -10,6 +10,79 @@
 	let userFillInfo = null;
 	let activeAction = null;
 
+	function starbucksCCPA(site) {
+		console.log("starbucksCCPA", site);
+
+		if (site.href !== "https://privacyportal-cdn.onetrust.com/dsarwebform/f9975fc5-c93f-4ff8-8169-846d8f6cd4d2/dd7e8c8f-839f-4be3-9ebc-060786941e92.html") {
+			console.log("not-starbucksCCPA");
+			return;
+		}
+
+		function watchForSubmission() {
+			if ( document.getElementById("formSubmitSuccessModal").style.display !== "block" ){
+				setTimeout(()=>{
+					watchForSubmission();
+				}, 1000);
+			} else {
+				// overlay.updateProgressBar("100%");
+				// overlay.updateText("Complete");
+				setTimeout(()=>{
+					sendMessage({
+						message: "close-current-tab",
+						action: "dataRequest",
+						status: "pending"
+					});
+				}, 1000)
+			}
+		}
+
+		// overlay.create();
+		// overlay.addText("In Progress");
+
+		let input1 = document.querySelector("label[aria-label='Right to Access']");
+		let inputFirstName = document.getElementById("firstNameDSARElement");
+		let inputLastName = document.getElementById("lastNameDSARElement");
+		let inputEmail = document.getElementById("emailDSARElement");
+		// let email = document.getElementById("emailInput");
+
+		console.log(input1);
+
+		setTimeout(()=>{
+			input1.click();
+			// overlay.updateProgressBar("20%");
+		}, 500);
+
+		setTimeout(()=>{
+			inputFirstName.focus();
+			inputFirstName.select();
+			inputFirstName.value = userFillInfo.firstName;
+			inputFirstName.blur();
+			// overlay.updateProgressBar("40%");
+		}, 500);
+
+		setTimeout(()=>{
+			inputLastName.focus();
+			inputLastName.select();
+			inputLastName.value = userFillInfo.lastName;
+			inputLastName.blur();
+			// overlay.updateProgressBar("60%");
+		}, 500);
+
+		setTimeout(()=>{
+			inputEmail.focus();
+			inputEmail.select();
+			inputEmail.value = userFillInfo.email;
+			inputEmail.blur();
+			// overlay.updateProgressBar("80%");
+		}, 500);
+
+
+
+
+
+
+	}
+
 	function dunkinDonutsCCPA(site) {
 		console.log("dunkinDonutsCCPA", userFillInfo);
 
@@ -18,9 +91,11 @@
 			return;
 		}
 
+
+
 		overlay.create();
 		overlay.addText("In Progress");
-		
+
 		// let overlay = document.querySelector(".mpm-body-loader-bar");
 
 		console.log("dunkinDonutsCCPA-init");
@@ -136,6 +211,10 @@
 			document.querySelector(".mpm-body-overlay-message").insertAdjacentElement(
 				"beforeend", link
 			);
+		},
+		hide() {
+			let overlay = document.createElement("mpm-body-overlay");
+			overlay.style.display = "none";
 		},
 		create() {
 			let overlay = document.createElement("div");
@@ -287,6 +366,9 @@
 				break;
 			case "www.dunkindonuts.com":
 				dunkinDonutsCCPA(site);
+				break;
+			case "privacyportal-cdn.onetrust.com":
+				starbucksCCPA(site);
 				break;
 			default:
 				console.error(`No recipe found for ${site}`);
