@@ -198,8 +198,23 @@ p {
   -moz-context-properties: fill;
 }
 
+/* Action Section */
+
 .action-section {
-  padding-top: 1.5rem;
-  padding-bottom: 1rem;
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.action-section h2 {
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.action-card {
+  background: var(--gray);
+	border-radius: 1rem 2rem 1rem 2rem;
+  padding: 1.5rem 2rem 1rem;
   margin-bottom: 1rem;
 }

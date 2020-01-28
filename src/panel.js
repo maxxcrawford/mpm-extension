@@ -49,8 +49,8 @@ function getActiveCards(data) {
 
 function updatePendingItems(data){
   sendMessage({message: "get-pending-actions-count"});
-  
-  console.log(data);
+
+  // console.log(data);
 }
 
 function getPendingItems(data){
@@ -217,7 +217,7 @@ function updatePendingActionsCount(count) {
 }
 
 function parseMessage(value){
-  console.log(value);
+  // console.log(value);
   if (!value) { return }
   switch (value.message) {
     case "sites-recommendation-results":
@@ -292,7 +292,7 @@ function confirmationsListenerInit(){
 
   let viewCompletedButton = document.querySelector(".view-completed-button");
   viewCompletedButton.addEventListener('click', () => {
-    console.log("view-completed-button");
+    // console.log("view-completed-button");
     // checkBoxes.forEach( checkbox => checkbox.checked = true);
   });
 
@@ -304,15 +304,15 @@ function confirmationsListenerInit(){
 
   checkBoxes.forEach( checkbox => {
     checkbox.addEventListener("change", () => {
-      console.log(checkbox);
+      // console.log(checkbox);
       // console.log("checked", this.checked);
       if(checkbox.checked) {
         // let url = new URL(checkbox.dataset.url);
-        console.log({
-          url: checkbox.dataset.url,
-          action: checkbox.dataset.action,
-          status: "completed"
-        });
+        // console.log({
+        //   url: checkbox.dataset.url,
+        //   action: checkbox.dataset.action,
+        //   status: "completed"
+        // });
         sendMessage({
           message: "update-pending-item",
           url: checkbox.dataset.url,

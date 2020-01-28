@@ -7,7 +7,8 @@
 	const staticSupportedSites = [
 		"https://www.dunkindonuts.com/en/consumer-rights",
 		"https://www.facebook.com/settings?tab=facerec",
-		// "https://www.facebook.com/help/contact/784491318687824"
+		"https://privacyportal-cdn.onetrust.com/dsarwebform/f9975fc5-c93f-4ff8-8169-846d8f6cd4d2/dd7e8c8f-839f-4be3-9ebc-060786941e92.html",
+		"https://www.starbucks.com/about-us/company-information/online-policies/privacy-policy/california"
 	];
 
 	// Generic descriptions for CCPA
@@ -52,6 +53,17 @@
 				}
 			},
 			{
+				site: "www.starbucks.com",
+				urls: {
+					dataRequest: "https://privacyportal-cdn.onetrust.com/dsarwebform/f9975fc5-c93f-4ff8-8169-846d8f6cd4d2/dd7e8c8f-839f-4be3-9ebc-060786941e92.html",
+					deleteRequest: "https://privacyportal-cdn.onetrust.com/dsarwebform/f9975fc5-c93f-4ff8-8169-846d8f6cd4d2/dd7e8c8f-839f-4be3-9ebc-060786941e92.html"
+				},
+				actions: {
+					ccpaDataRequest,
+					ccpaDeleteRequest
+				}
+			},
+			{
 				site: "www.facebook.com",
 				urls: {
 					// dataRequest: "https://www.facebook.com/help/contact/784491318687824",
@@ -75,7 +87,7 @@
 
 	async function getPendingItems() {
 		let data = await extensionData.get();
-		console.log("getPendingItems", data.mpmSyncData.urlStatuses );
+		// console.log("getPendingItems", data.mpmSyncData.urlStatuses );
 
 		let sites = Object.keys(data.mpmSyncData.urlStatuses);
 		let pendingData = {};
@@ -126,7 +138,7 @@
 		let statusArrayValues =  Object.values(data.mpmSyncData.urlStatuses[url]);
 		let statusArrayKeys =  Object.keys(data.mpmSyncData.urlStatuses[url]);
 		let index = statusArrayValues.indexOf(string);
-		console.log("getActionItems", index);
+		// console.log("getActionItems", index);
 		if (index < 0) { return false; }
 		return statusArrayKeys[index];
 	}
@@ -145,7 +157,7 @@
 	}
 
 	async function countAllActionCards(string){
-		console.log("countAllActionCards");
+		// console.log("countAllActionCards");
 		let data = await extensionData.get();
 		let supportedSites = Object.keys(data.mpmSyncData.urlStatuses);
 
@@ -224,11 +236,11 @@
 
 	// If the shape of this data changes, bump this version number and creat a
 	// migration function that references it
-	const LATEST_DATA_VERSION = 0.2;
+	const LATEST_DATA_VERSION = 0.3;
 
 	const extensionData = {
 		async init() {
-			console.log("extensionData init");
+			// console.log("extensionData init");
 			let data = {
 				mpmSyncData: {
 					version: LATEST_DATA_VERSION,
@@ -239,18 +251,18 @@
 				// console.log(site);
 				// console.log("site.urls: ", site.urls);
 				let actionArr = buildActionsObject(site.urls);
-				console.log(typeof actionArr);
+				// console.log(typeof actionArr);
 				data.mpmSyncData.urlStatuses[site.site] = actionArr;
-				console.log( typeof data.mpmSyncData.urlStatuses[site.site] );
+				// console.log( typeof data.mpmSyncData.urlStatuses[site.site] );
 				// console.log( data.mpmSyncData.urlStatuses[site.site] );
 				// data.mpmSyncData.urlStatuses[site.site] = actionArr;
 			}
 
-			console.log("init: ", data);
+			// console.log("init: ", data);
 			await this.set(data);
 		},
 		async get() {
-			console.log("get");
+			// console.log("get");
 			let data = await browser.storage.local.get("mpmSyncData");
 			return data;
 		},
@@ -260,7 +272,7 @@
 				return;
 			}
 
-			console.log("migration needed", res);
+			console.log("migration needed");
 
 			// let userSitesObject = res;
 			// let userSites = Object.keys(userSitesObject.mpmSyncData.urlStatuses);
@@ -355,7 +367,7 @@
 	}
 
 	async function panelOpenWithAction(request){
-		console.log("panelOpenWithAction", request);
+		// console.log("panelOpenWithAction", request);
 		let userInfo = await getUserInfo();
 
 		if (!userInfo) {
@@ -382,7 +394,7 @@
 	}
 
 	function closeCurrentTab(sender) {
-		console.log("closeCurrentTab");
+		// console.log("closeCurrentTab");
 		browser.tabs.remove(sender.tab.id);
 	}
 
@@ -390,7 +402,7 @@
 			console.log("messageCatcher", {request, sender, sendResponse});
 		switch (request.message) {
 			case "close-current-tab":
-				console.log("close-current-tab", request);
+				// console.log("close-current-tab", request);
 				updateActionStatus({
 					url: sender.url,
 					action: request.action,
@@ -407,9 +419,9 @@
 					response: staticSupportedSites
 				});
 			case "get-pending-actions-count":
-				console.log("get-pending-actions-count", sender);
+				// console.log("get-pending-actions-count", sender);
 				let actionCount = await countAllActionCards("pending");
-				console.log("countAllActionCards: ", actionCount);
+				// console.log("countAllActionCards: ", actionCount);
 				return Promise.resolve({
 					message: "send-pending-actions-count",
 					response: actionCount
@@ -440,7 +452,7 @@
 					url: activeTabURL
 				});
 			case "request-action-cards":
-				console.log(request.site);
+				// console.log(request.site);
 				let statusData = await extensionData.get();
 				statusData = statusData.mpmSyncData.urlStatuses[request.site];
 				let actionCards = await getActionCards(request.site);
@@ -456,7 +468,7 @@
 					response: pendingList
 				});
 			case "update-pending-item":
-				console.log(request);
+				// console.log(request);
 				updateActionStatus({
 					url: request.url,
 					action: request.action,
@@ -466,6 +478,14 @@
 				return Promise.resolve({
 					message: "pending-item-updated",
 					// response: pendingList
+				});
+			case "get-all-actions":
+				// console.log(request);
+				let data = await extensionData.get();
+				return Promise.resolve({
+					message: "send-all-actions",
+					statuses: data.mpmSyncData.urlStatuses,
+					actions: supportedSitesWithActions.sites
 				});
 		}
 	}
@@ -487,7 +507,7 @@
 		let currentTabURL = new URL(currentTab[0].url);
 		let siteRecommendations = await checkForRecommendations();
 		if ( siteRecommendations.recommendations ) {
-			console.log("siteRecommendations.recommendations");
+			// console.log("siteRecommendations.recommendations");
 			let actionCount = await countSiteActionCards(currentTabURL.hostname, "no action");
 			actionCount = actionCount.toString();
 			browser.browserAction.setBadgeText({
@@ -509,7 +529,7 @@
 		browser.browserAction.openPopup();
 
 		let localData = await extensionData.get();
-		console.log(localData);
+		// console.log(localData);
 	});
 
 	browser.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
@@ -537,9 +557,9 @@
 	});
 
 	function handleInstalled(details) {
-	  // browser.tabs.create({
-	  //   url: "/options.html"
-	  // });
+	  browser.tabs.create({
+	    url: "/options.html"
+	  });
 	}
 
 	browser.runtime.onInstalled.addListener(handleInstalled);
