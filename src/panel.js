@@ -47,14 +47,20 @@ function getActiveCards(data) {
   });
 }
 
+function updatePendingItems(data){
+  sendMessage({message: "get-pending-actions-count"});
+  
+  console.log(data);
+}
+
 function getPendingItems(data){
   let pendingItems = Object.entries(data);
-  console.log("pendingItems", pendingItems);
 
   let confirmationsList = document.querySelector("#confirmationsList");
 
+  confirmationsList.innerHTML = "";
+
   function decodeSiteAction(action){
-    console.log(action);
     let string;
     switch (action) {
       case "doNotSell":
@@ -72,9 +78,11 @@ function getPendingItems(data){
 
   pendingItems.forEach( (item, i) => {
     let idName = "site" + i;
+    let url = item[0];
     let siteName = item[0];
     siteName = siteName.replace("www.", "");
     // siteName = siteName.toUpperCase()
+    let action = item[1];
     let siteAction = item[1];
     siteAction = decodeSiteAction(siteAction);
 
@@ -98,7 +106,9 @@ function getPendingItems(data){
 
     let pendingItemInput = document.createElement("input");
     pendingItemInput.setAttribute("type", "checkbox");
-    pendingItemInput.id = siteName;
+    pendingItemInput.dataset.url = url;
+    pendingItemInput.dataset.action = action;
+    pendingItemInput.id = idName;
     pendingItemHTML.insertAdjacentElement("beforeend", pendingItemInput);
 
     confirmationsList.insertAdjacentElement("beforeend", pendingItemHTML)
@@ -110,25 +120,19 @@ function getPendingItems(data){
 }
 
 function buildCards(data) {
-  console.log(data);
   let actionsData = Object.entries(data.actions.actions);
   let actionsURLs = data.actions.urls;
   let status = data.status;
-
   let actionsContainer = document.querySelector(".card-site-not-empty");
 
-  console.log(status);
-
-
-  actionsData.forEach( item => {
-    let actionData = item[1];
+  for (let action of actionsData) {
+    let actionData = action[1];
 
     let card = document.createElement("div");
     card.className = "card";
     if (actionData.warning) { card.classList.add("warning") }
 
     let actionStatus = status[actionData.action];
-    console.log(actionStatus);
 
     // Build Title
     let cardTitle = document.createElement("div");
@@ -152,20 +156,23 @@ function buildCards(data) {
     let cardAction = document.createElement("div");
     cardAction.className = "card-action";
 
-    if ( actionStatus === "pending" ) {
-      cardAction.innerText = "Pending";
+    if (actionStatus === "pending") {
+      cardAction.innerText = "Request Pending";
       card.classList.add("pending", "js-pending");
-    } else {
+      card.insertAdjacentElement("beforeend", cardAction);
+      actionsContainer.insertAdjacentElement("beforeend", card);
+    } else if (actionStatus === "no action") {
       cardAction.classList.add("button", "js-card-action");
       cardAction.innerText = actionData.cta;
       cardAction.dataset.action = actionData.action
       cardAction.dataset.url = actionsURLs[actionData.action]
+      card.insertAdjacentElement("beforeend", cardAction);
+
+      actionsContainer.insertAdjacentElement("beforeend", card);
     }
 
-    card.insertAdjacentElement("beforeend", cardAction);
 
-    actionsContainer.insertAdjacentElement("beforeend", card);
-  });
+  }
 
   let cardActions = document.querySelectorAll(".js-card-action");
   for (let action of cardActions) {
@@ -231,6 +238,9 @@ function parseMessage(value){
     case "send-pending-confirmations":
       getPendingItems(value.response)
       break;
+    case "pending-item-updated":
+      updatePendingItems(value)
+      break;
   }
 }
 
@@ -271,12 +281,13 @@ function confirmationsListenerInit(){
 
   let confirmationsForm = document.querySelector("#confirmationsList");
   let checkBoxes = confirmationsForm.querySelectorAll("input[type='checkbox']")
-  // console.log("confirmationsListenerInit", confirmationsForm);
 
-  let selectAllButton = document.querySelector(".confirmation-button");
+  let selectAllButton = document.querySelector(".mark-all-button");
   selectAllButton.addEventListener('click', () => {
-    console.log("selectAllButton");
-    checkBoxes.forEach( checkbox => checkbox.checked = !checkbox.checked);
+    checkBoxes.forEach( checkbox => {
+      checkbox.checked = !checkbox.checked;
+      checkbox.dispatchEvent(new Event('change', { 'bubbles': true }));
+    });
   });
 
   let viewCompletedButton = document.querySelector(".view-completed-button");
@@ -285,12 +296,33 @@ function confirmationsListenerInit(){
     // checkBoxes.forEach( checkbox => checkbox.checked = true);
   });
 
-
-
   let backButton = document.querySelector(".back-button");
   backButton.addEventListener('click', () => {
     // console.log(backButton);
     changePanel("home");
+  });
+
+  checkBoxes.forEach( checkbox => {
+    checkbox.addEventListener("change", () => {
+      console.log(checkbox);
+      // console.log("checked", this.checked);
+      if(checkbox.checked) {
+        // let url = new URL(checkbox.dataset.url);
+        console.log({
+          url: checkbox.dataset.url,
+          action: checkbox.dataset.action,
+          status: "completed"
+        });
+        sendMessage({
+          message: "update-pending-item",
+          url: checkbox.dataset.url,
+          action: checkbox.dataset.action,
+          status: "completed"
+        })
+      } else {
+          // Checkbox is not checked..
+      }
+    });
   });
 }
 
@@ -302,8 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
   sendMessage({message: "get-pending-actions-count"});
   sendMessage({message: "check-for-site-recommendations"});
   sendMessage({message: "get-ccpa-info"});
-
-
 
   let buttonsURLs = document.querySelectorAll(".button-url");
   for (let button of buttonsURLs) {

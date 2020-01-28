@@ -219,6 +219,10 @@ section.cards {
   cursor: pointer;
 }
 
+/* .card.pending .card-description {
+  display: none;
+} */
+
 .pending .card-action {
   background: var(--light-gray);
 }

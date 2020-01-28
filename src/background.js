@@ -7,7 +7,7 @@
 	const staticSupportedSites = [
 		"https://www.dunkindonuts.com/en/consumer-rights",
 		"https://www.facebook.com/settings?tab=facerec",
-		"https://www.facebook.com/help/contact/784491318687824"
+		// "https://www.facebook.com/help/contact/784491318687824"
 	];
 
 	// Generic descriptions for CCPA
@@ -54,16 +54,16 @@
 			{
 				site: "www.facebook.com",
 				urls: {
-					dataRequest: "https://www.facebook.com/help/contact/784491318687824",
-					deleteRequest: "https://www.facebook.com/help/contact/784491318687824",
+					// dataRequest: "https://www.facebook.com/help/contact/784491318687824",
+					// deleteRequest: "https://www.facebook.com/help/contact/784491318687824",
 					facialRecognition: "https://www.facebook.com/settings?tab=facerec"
 				},
 				actions: {
-					ccpaDataRequest,
-					ccpaDeleteRequest,
+					// ccpaDataRequest,
+					// ccpaDeleteRequest,
 					facialRecognition: {
 						title: "Disable Facial Recognition",
-						icon: "/images/delete-16.svg",
+						icon: "/images/preferences-16.svg",
 						description: "Stop Facebook from using facial recognition technology to identify you in photos and videos.",
 						cta: "Disable",
 						action: "facialRecognition"
@@ -224,7 +224,7 @@
 
 	// If the shape of this data changes, bump this version number and creat a
 	// migration function that references it
-	const LATEST_DATA_VERSION = 0.1;
+	const LATEST_DATA_VERSION = 0.2;
 
 	const extensionData = {
 		async init() {
@@ -286,8 +286,17 @@
 		},
 		async update(data) {
 			let syncData = await this.get();
-			let url = new URL(data.source);
-			url = url.hostname;
+			let url = data.source;
+
+			try {
+				url = new URL(url);
+			} catch (e) {
+
+			}
+
+			if (typeof url === "object") {
+				url = url.hostname;
+			}
 
 			syncData.mpmSyncData.urlStatuses[url][data.action] =  data.status;
 
@@ -366,7 +375,7 @@
 	}
 
 	function updateActionStatus(data) {
-		let source = data.sender.url;
+		let source = data.url;
 		let action = data.action;
 		let status = data.status;
 		extensionData.update({action, source, status})
@@ -378,12 +387,12 @@
 	}
 
 	async function messageCatcher(request, sender, sendResponse) {
-		console.log("messageCatcher", {request, sender, sendResponse});
+			console.log("messageCatcher", {request, sender, sendResponse});
 		switch (request.message) {
 			case "close-current-tab":
 				console.log("close-current-tab", request);
 				updateActionStatus({
-					sender,
+					url: sender.url,
 					action: request.action,
 					status: request.status
 				});
@@ -445,6 +454,18 @@
 				return Promise.resolve({
 					message: "send-pending-confirmations",
 					response: pendingList
+				});
+			case "update-pending-item":
+				console.log(request);
+				updateActionStatus({
+					url: request.url,
+					action: request.action,
+					status: request.status
+				});
+				// let pendingList = await getPendingItems();
+				return Promise.resolve({
+					message: "pending-item-updated",
+					// response: pendingList
 				});
 		}
 	}
