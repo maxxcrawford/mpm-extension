@@ -570,9 +570,9 @@
 	});
 
 	function handleInstalled(details) {
-	  // browser.tabs.create({
-	  //   url: "/options.html"
-	  // });
+	  browser.tabs.create({
+	    url: "/options.html"
+	  });
 	}
 
 	browser.runtime.onInstalled.addListener(handleInstalled);
